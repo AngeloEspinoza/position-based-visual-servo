@@ -2,6 +2,8 @@ import cv2
 import cv2.aruco as aruco
 import numpy as np
 import imutils
+import rotm2euler
+import math
 
 MARKER_SIZE = 100 # milimeters
 BLUE = (255, 0, 0)
@@ -52,13 +54,30 @@ while True:
 
 			aruco.drawAxis(frame, K, dist, rvec_list_all[marker], tvec_list_all[marker], 50)
 
+			rvec_flipped = rvec * -1
+			tvec_flipped = tvec * -1
+
+			# Conver rvec to a rotation matrix
+			R, jacobian = cv2.Rodrigues(rvec_flipped)
+			realworld_tvec = np.dot(R, tvec_flipped)
+			
+			pitch, roll, yaw =  rotm2euler.rotation_matrix_to_euler_angles(R)
+
 		tvec_str_x = 'x = {0:4.0f}'.format(tvec[0])
 		tvec_str_y = 'y = {0:4.0f}'.format(tvec[1])
 		tvec_str_z = 'z = {0:4.0f}'.format(tvec[2])
-		cv2.putText(frame, tvec_str_x, (50, 50), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, tvec_str_y, (50, 65), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, tvec_str_z, (50, 80), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 
+		rvec_str_pitch = 'pitch = {0:4.0f}'.format(math.degrees(pitch))
+		rvec_str_roll = 'roll = {0:4.0f}'.format(math.degrees(roll))
+		rvec_str_yaw = 'yaw = {0:4.0f}'.format(math.degrees(yaw))
+
+		cv2.putText(frame, tvec_str_x, (5, 10), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
+		cv2.putText(frame, tvec_str_y, (5, 20), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
+		cv2.putText(frame, tvec_str_z, (5, 30), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
+
+		cv2.putText(frame, rvec_str_roll, (5, 50), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
+		cv2.putText(frame, rvec_str_pitch, (5, 60), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
+		cv2.putText(frame, rvec_str_yaw, (5, 70), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 
 	cv2.imshow('Aruco Detection - RGB', frame)
 	cv2.imshow('Aruco Detection - Gray', frame_gray)

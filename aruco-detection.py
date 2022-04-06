@@ -123,6 +123,8 @@ while True:
 		# # Clear terminal
 		# os.system('cls')
 
+		print(rvec_list_all)
+
 		x.append(realworld_tvec[0])
 		y.append(realworld_tvec[1])
 		z.append(realworld_tvec[2])

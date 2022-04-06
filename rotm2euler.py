@@ -12,7 +12,7 @@ def isRotationMatrix(R):
 	"""
 	Rt = np.transpose(R)
 	should_be_identity = np.dot(Rt, R)
-	I = np.identity(3, dtype=R.dtype)
+	I = np.identity(n=3, dtype=R.dtype)
 	n = np.linalg.norm(I - should_be_identity)
 	return n < 1e-6
 

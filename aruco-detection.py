@@ -23,7 +23,7 @@ ARUCO_DICT = aruco.getPredefinedDictionary(aruco.DICT_4X4_250)
 # Define camera to use and set resolution and frame rate
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc('M','J','P','G'))
-
+ 
 # Desired pose of the goal with respect to camera
 x_desired = 8
 y_desired = -274
@@ -38,7 +38,7 @@ Cd_T_G = np.identity(n=4, dtype=np.float64) # Desired pose matrix
 roll_list, pitch_list, yaw_list = [], [], []
 x, y, z = [], [], []
 time_list = []
-figure, axis = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
+# figure, axis = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
 
 start_time = time.time()
 
@@ -54,6 +54,7 @@ while True:
 												 K,
 												 dist)
 
+	# Optical center of the camera
 	cv2.circle(frame, (287, 231), 5, BLUE, -1)
 
 	# Verify at least one ArUco marker was detected
@@ -89,7 +90,6 @@ while True:
 			# Convert rvec to a rotation matrix
 			R, jacobian = cv2.Rodrigues(rvec_flipped)
 			realworld_tvec = np.dot(R, tvec_flipped)
-			# print(R, tvec_flipped)
 
 			pitch, roll, yaw =  rotm2euler.rotation_matrix_to_euler_angles(R)
 
@@ -104,9 +104,9 @@ while True:
 			# Required motion
 			T_delta = C_Te_G @ np.linalg.inv(Cd_T_G)
 
-		tvec_str_x = 'x = {0:4.0f}'.format(tvec_flipped[0])
-		tvec_str_y = 'y = {0:4.0f}'.format(tvec_flipped[1])
-		tvec_str_z = 'z = {0:4.0f}'.format(tvec_flipped[2])
+		tvec_str_x = 'x = {0:4.0f}'.format(realworld_tvec[0])
+		tvec_str_y = 'y = {0:4.0f}'.format(realworld_tvec[1])
+		tvec_str_z = 'z = {0:4.0f}'.format(realworld_tvec[2])
 
 		rvec_str_pitch = 'pitch = {0:4.0f}'.format(math.degrees(pitch))
 		rvec_str_roll = 'roll = {0:4.0f}'.format(math.degrees(roll))
@@ -120,8 +120,9 @@ while True:
 		cv2.putText(frame, rvec_str_pitch, (5, 60), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 		cv2.putText(frame, rvec_str_yaw, (5, 70), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 
-		# # Clear terminal
-		# os.system('cls')
+		print(R)
+		# Clear terminal
+		os.system('cls')
 
 		print(rvec_list_all)
 
@@ -135,19 +136,19 @@ while True:
 
 		time_list.append(current_time)
 
-		axis[0].plot(time_list, x, color='b', label='x')
-		axis[0].plot(time_list, y, color='g', label='y')
-		axis[0].plot(time_list, z, color='r', label='z')
+		# axis[0].plot(time_list, x, color='b', label='x')
+		# axis[0].plot(time_list, y, color='g', label='y')
+		# axis[0].plot(time_list, z, color='r', label='z')
 
-		axis[1].plot(time_list, roll_list, color='g', label='roll')
-		axis[1].plot(time_list, pitch_list, color='r', label='pitch')
-		axis[1].plot(time_list, yaw_list, color='b', label='yaw')
+		# axis[1].plot(time_list, roll_list, color='g', label='roll')
+		# axis[1].plot(time_list, pitch_list, color='r', label='pitch')
+		# axis[1].plot(time_list, yaw_list, color='b', label='yaw')
 
-		if len(x) == 1:  
-			axis[0].legend(loc='upper right')
-			axis[1].legend(loc='upper right')
+		# if len(x) == 1:  
+		# 	axis[0].legend(loc='upper right')
+		# 	axis[1].legend(loc='upper right')
 
-		plt.pause(0.001)
+		# plt.pause(0.001)
 		
 	cv2.imshow('Aruco Detection - RGB', frame)
 	# cv2.imshow('Aruco Detection - Gray', frame_gray)

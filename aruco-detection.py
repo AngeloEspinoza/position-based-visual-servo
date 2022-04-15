@@ -97,6 +97,8 @@ while True:
 			C_Te_G[:3, :3] = R
 			C_Te_G[:3, 3] = realworld_tvec
 
+			print(realworld_tvec)
+
 			# print('----------')
 			# print('C_Te_G = {}'.format(C_Te_G))
 			# print('----------')
@@ -120,11 +122,11 @@ while True:
 		cv2.putText(frame, rvec_str_pitch, (5, 60), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 		cv2.putText(frame, rvec_str_yaw, (5, 70), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 
-		print(R)
+		# print(R)
 		# Clear terminal
 		os.system('cls')
 
-		print(rvec_list_all)
+		# print(rvec_list_all)
 
 		x.append(realworld_tvec[0])
 		y.append(realworld_tvec[1])

@@ -5,6 +5,8 @@ import rotm2euler
 import matplotlib.pyplot as plt
 import math
 import os
+import time
+import config
 
 def draw_axis(img, corners, img_pts):
     corner = tuple(corners[0].ravel().astype(int))
@@ -41,6 +43,13 @@ axis = np.float32([[45, 0, 0], [0, -45, 0], [0, 0, -45]]).reshape(-1, 3)
 estimated_pose = np.identity(n=4, dtype=np.float64) # Estimated pose matrix
 desired_pose = np.identity(n=4, dtype=np.float64) # Desired pose matrix
 
+roll_list, pitch_list, yaw_list = [], [], []
+x, y, z = [], [], []
+time_list = []
+figure, ax = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
+
+start_time = time.time()
+
 while True:
 	# Read frames of the camera
 	ret, frame = cap.read()
@@ -64,6 +73,7 @@ while True:
 			pass
 
 		aruco.drawDetectedMarkers(frame, corners)
+		current_time = time.time() - start_time
 
 		# Center point between the 4 corners
 		aruco_center = np.asarray((abs(corners[0][0][2][0] + corners[0][0][0][0]) // 2,
@@ -165,6 +175,32 @@ while True:
 		cv2.putText(frame, rvec_str_pitch, (5, 60), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 		cv2.putText(frame, rvec_str_yaw, (5, 70), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 		
+		x.append(realworld_tvec[0])
+		y.append(realworld_tvec[1])
+		z.append(realworld_tvec[2])
+
+		roll_list.append(math.degrees(roll))
+		pitch_list.append(math.degrees(pitch))
+		yaw_list.append(math.degrees(yaw))
+
+		time_list.append(current_time)
+
+		ax[0].plot(time_list, x, color='b', label='x')
+		ax[0].plot(time_list, y, color='g', label='y')
+		ax[0].plot(time_list, z, color='r', label='z')
+
+		ax[1].plot(time_list, roll_list, color='g', label='roll')
+		ax[1].plot(time_list, pitch_list, color='r', label='pitch')
+		ax[1].plot(time_list, yaw_list, color='b', label='yaw')
+
+		if len(x) == 1:  
+			ax[0].legend(loc='upper right')
+			ax[1].legend(loc='upper right')
+
+		plt.pause(0.001)
+		config.x = 1
+		config.print_x()
+
 	cv2.imshow('PVBS - RGB', frame)
 
 	# If 'q' pressed, save the current pose of the ArUco marker 

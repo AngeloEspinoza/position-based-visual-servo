@@ -8,7 +8,7 @@ def isRotationMatrix(R):
 		R (ndarray): Rotation matrix
 
 		Returns:
-		n (float): norm close to 0 (with precision of < 1e-6) 
+		n (float): Norm close to 0 (with precision of < 1e-6) 
 	"""
 	Rt = np.transpose(R)
 	should_be_identity = np.dot(Rt, R)

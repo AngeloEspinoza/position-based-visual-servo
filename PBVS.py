@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import math
 import os
 import time
-import config
+import GUI
 
 def draw_axis(img, corners, img_pts):
     corner = tuple(corners[0].ravel().astype(int))
@@ -43,16 +43,26 @@ axis = np.float32([[45, 0, 0], [0, -45, 0], [0, 0, -45]]).reshape(-1, 3)
 estimated_pose = np.identity(n=4, dtype=np.float64) # Estimated pose matrix
 desired_pose = np.identity(n=4, dtype=np.float64) # Desired pose matrix
 
+# Lists that will store pose info to plot it afterwards
 roll_list, pitch_list, yaw_list = [], [], []
 x, y, z = [], [], []
+x_e, y_e, z_e = [], [], []
 time_list = []
-figure, ax = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
+figure1, ax1 = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
+figure2, ax2 = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
 
 start_time = time.time()
+
+root = 'PBVS - info'
+cv2.namedWindow(root)
+img_info = np.ones((600, 400, 3), np.uint8)
 
 while True:
 	# Read frames of the camera
 	ret, frame = cap.read()
+
+	cv2.namedWindow(root)
+	img_info = np.ones((600, 400, 3), np.uint8)
 
 	# Convert image to gray scale
 	frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -127,79 +137,66 @@ while True:
 					pass
 				continue
 		
-		desired_realworld_tvec_str_x = 'Desired translation vector x: {}'.format(desired_realworld_tvec[0])
-		desired_realworld_tvec_str_y = 'Desired translation vector y: {}'.format(desired_realworld_tvec[1])
-		desired_realworld_tvec_str_z = 'Desired translation vector z: {}'.format(desired_realworld_tvec[2])
-							
-		tvec_error_str_x ='Translation error x: {}'.format(realworld_tvec[0] - desired_realworld_tvec[0])
-		tvec_error_str_y ='Translation error y: {}'.format(realworld_tvec[1] - desired_realworld_tvec[1])
-		tvec_error_str_z ='Translation error z: {}'.format(realworld_tvec[2] - desired_realworld_tvec[2])
+		GUI.display_info_on_screen(img=frame,
+								   tvec=realworld_tvec,
+								   euler=estimated_euler_angles,
+								   tvec_d=desired_realworld_tvec,
+								   euler_d=desired_euler_angles)
 
-		desired_euler_angles_str_roll = 'Desired euler angle roll: {}'.format(desired_euler_angles[0])
-		desired_euler_angles_str_pitch = 'Desired euler angle pitch: {}'.format(desired_euler_angles[1])
-		desired_euler_angles_str_yaw = 'Desired euler angle yaw: {}'.format(desired_euler_angles[2])
-
-		rvec_error_str_roll ='Rotation error roll: {}'.format(estimated_euler_angles[0] - desired_euler_angles[0])
-		rvec_error_str_pitch ='Rotation error pitch: {}'.format(estimated_euler_angles[1] - desired_euler_angles[1])
-		rvec_error_str_yaw ='Rotation error yaw: {}'.format(estimated_euler_angles[2] - desired_euler_angles[2])
-
-		tvec_str_x = 'x = {0:4.0f} milimiters'.format(realworld_tvec[0])
-		tvec_str_y = 'y = {0:4.0f} milimiters'.format(realworld_tvec[1])
-		tvec_str_z = 'z = {0:4.0f} milimiters'.format(realworld_tvec[2])
-
-		rvec_str_pitch = 'pitch = {0:4.0f} degrees'.format(pitch)
-		rvec_str_roll = 'roll = {0:4.0f} degrees'.format(roll)
-		rvec_str_yaw = 'yaw = {0:4.0f} degrees'.format(yaw)
-
-		cv2.putText(frame, desired_realworld_tvec_str_x, (300, 10), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, desired_realworld_tvec_str_y, (300, 20), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, desired_realworld_tvec_str_z, (300, 30), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		
-		cv2.putText(frame, tvec_error_str_x, (300, 50), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, tvec_error_str_y, (300, 60), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, tvec_error_str_z, (300, 70), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-
-		cv2.putText(frame, desired_euler_angles_str_roll, (300, 90), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, desired_euler_angles_str_pitch, (300, 100), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, desired_euler_angles_str_yaw, (300, 110), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		
-		cv2.putText(frame, rvec_error_str_roll, (300, 130), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, rvec_error_str_pitch, (300, 140), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, rvec_error_str_yaw, (300, 150), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-
-		cv2.putText(frame, tvec_str_x, (5, 10), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, tvec_str_y, (5, 20), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, tvec_str_z, (5, 30), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-
-		cv2.putText(frame, rvec_str_roll, (5, 50), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, rvec_str_pitch, (5, 60), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		cv2.putText(frame, rvec_str_yaw, (5, 70), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
-		
 		x.append(realworld_tvec[0])
 		y.append(realworld_tvec[1])
 		z.append(realworld_tvec[2])
 
-		roll_list.append(math.degrees(roll))
-		pitch_list.append(math.degrees(pitch))
-		yaw_list.append(math.degrees(yaw))
+		roll_list.append(roll)
+		pitch_list.append(pitch)
+		yaw_list.append(yaw)
+
+		# x_e = realworld_tvec[0] - desired_realworld_tvec[0]
+		x_e.append(realworld_tvec[0] - desired_realworld_tvec[0]) 
+		y_e.append(realworld_tvec[1] - desired_realworld_tvec[1]) 
+		z_e.append(realworld_tvec[2] - desired_realworld_tvec[2]) 
 
 		time_list.append(current_time)
 
-		ax[0].plot(time_list, x, color='b', label='x')
-		ax[0].plot(time_list, y, color='g', label='y')
-		ax[0].plot(time_list, z, color='r', label='z')
+		ax1[0].plot(time_list, x, color='b', label='x')
+		ax1[0].plot(time_list, y, color='g', label='y')
+		ax1[0].plot(time_list, z, color='r', label='z')
 
-		ax[1].plot(time_list, roll_list, color='g', label='roll')
-		ax[1].plot(time_list, pitch_list, color='r', label='pitch')
-		ax[1].plot(time_list, yaw_list, color='b', label='yaw')
+		ax1[1].plot(time_list, roll_list, color='g', label='roll')
+		ax1[1].plot(time_list, pitch_list, color='r', label='pitch')
+		ax1[1].plot(time_list, yaw_list, color='b', label='yaw')
+
+		ax2[0].plot(time_list, x_e, color='g', label='Error x')
+		ax2[0].plot(time_list, y_e, color='r', label='Error y')
+		ax2[0].plot(time_list, z_e, color='b', label='Error z')
+
+		ax1[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
+		ax1[1].set_xlim(left=max(0, current_time-10), right=current_time+10)
+
+		ax2[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
+		ax2[1].set_xlim(left=max(0, current_time-10), right=current_time+10)
 
 		if len(x) == 1:  
-			ax[0].legend(loc='upper right')
-			ax[1].legend(loc='upper right')
+			ax1[0].legend(loc='upper right')
+			ax1[1].legend(loc='upper right')
+			ax2[0].legend(loc='upper right')
+			ax2[1].legend(loc='upper right')
 
 		plt.pause(0.001)
-		config.x = 1
-		config.print_x()
+
+		GUI.display_translation_info(img=img_info,
+								   tvec=realworld_tvec,
+								   euler=estimated_euler_angles,
+								   tvec_d=desired_realworld_tvec,
+								   euler_d=desired_euler_angles)
+		GUI.display_rotation_info(img=img_info,
+								   tvec=realworld_tvec,
+								   euler=estimated_euler_angles,
+								   tvec_d=desired_realworld_tvec,
+								   euler_d=desired_euler_angles)
+	
+	GUI.display_background(img_info)
+	cv2.imshow(root, img_info)
 
 	cv2.imshow('PVBS - RGB', frame)
 

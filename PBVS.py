@@ -45,14 +45,17 @@ desired_pose = np.identity(n=4, dtype=np.float64) # Desired pose matrix
 
 # Lists that will store pose info to plot it afterwards
 roll_list, pitch_list, yaw_list = [], [], []
-x, y, z = [], [], []
-x_e, y_e, z_e = [], [], []
+x_list, y_list, z_list = [], [], []
+x_e_list, y_e_list, z_e_list = [], [], []
+roll_e_list, pitch_e_list, yaw_e_list = [], [], []
 time_list = []
+
 figure1, ax1 = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
 figure2, ax2 = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
 
 start_time = time.time()
 
+# Set up the GUI window to display the info
 root = 'PBVS - info'
 cv2.namedWindow(root)
 img_info = np.ones((600, 400, 3), np.uint8)
@@ -143,32 +146,39 @@ while True:
 								   tvec_d=desired_realworld_tvec,
 								   euler_d=desired_euler_angles)
 
-		x.append(realworld_tvec[0])
-		y.append(realworld_tvec[1])
-		z.append(realworld_tvec[2])
+		x_list.append(realworld_tvec[0])
+		y_list.append(realworld_tvec[1])
+		z_list.append(realworld_tvec[2])
 
 		roll_list.append(roll)
 		pitch_list.append(pitch)
 		yaw_list.append(yaw)
 
-		# x_e = realworld_tvec[0] - desired_realworld_tvec[0]
-		x_e.append(realworld_tvec[0] - desired_realworld_tvec[0]) 
-		y_e.append(realworld_tvec[1] - desired_realworld_tvec[1]) 
-		z_e.append(realworld_tvec[2] - desired_realworld_tvec[2]) 
+		x_e_list.append(realworld_tvec[0] - desired_realworld_tvec[0]) 
+		y_e_list.append(realworld_tvec[1] - desired_realworld_tvec[1]) 
+		z_e_list.append(realworld_tvec[2] - desired_realworld_tvec[2]) 
+
+		roll_e_list.append(roll - desired_euler_angles[0])
+		pitch_e_list.append(pitch - desired_euler_angles[1])
+		yaw_e_list.append(yaw - desired_euler_angles[2])
 
 		time_list.append(current_time)
 
-		ax1[0].plot(time_list, x, color='b', label='x')
-		ax1[0].plot(time_list, y, color='g', label='y')
-		ax1[0].plot(time_list, z, color='r', label='z')
+		ax1[0].plot(time_list, x_list, color='b', label='x')
+		ax1[0].plot(time_list, y_list, color='g', label='y')
+		ax1[0].plot(time_list, z_list, color='r', label='z')
 
 		ax1[1].plot(time_list, roll_list, color='g', label='roll')
 		ax1[1].plot(time_list, pitch_list, color='r', label='pitch')
 		ax1[1].plot(time_list, yaw_list, color='b', label='yaw')
 
-		ax2[0].plot(time_list, x_e, color='g', label='Error x')
-		ax2[0].plot(time_list, y_e, color='r', label='Error y')
-		ax2[0].plot(time_list, z_e, color='b', label='Error z')
+		ax2[0].plot(time_list, x_e_list, color='g', label='Error x')
+		ax2[0].plot(time_list, y_e_list, color='r', label='Error y')
+		ax2[0].plot(time_list, z_e_list, color='b', label='Error z')
+
+		ax2[1].plot(time_list, roll_e_list, color='g', label='Error roll')
+		ax2[1].plot(time_list, pitch_e_list, color='r', label='Error pitch')
+		ax2[1].plot(time_list, yaw_e_list, color='b', label='Error yaw')
 
 		ax1[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
 		ax1[1].set_xlim(left=max(0, current_time-10), right=current_time+10)
@@ -176,7 +186,7 @@ while True:
 		ax2[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
 		ax2[1].set_xlim(left=max(0, current_time-10), right=current_time+10)
 
-		if len(x) == 1:  
+		if len(x_list) == 1:  
 			ax1[0].legend(loc='upper right')
 			ax1[1].legend(loc='upper right')
 			ax2[0].legend(loc='upper right')

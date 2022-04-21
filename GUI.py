@@ -16,27 +16,21 @@ def display_background(img):
 	cv2.line(img, (x//3, 0), (x//3, y//2+20), (255, 255, 255), 3)
 	cv2.line(img, ((x//3)*2, 0), ((x//3)*2, y//2+20), (255, 255, 255), 3)
 
-def display_translation_info(img, tvec, euler, tvec_d, euler_d):
+def display_translation_info(img, tvec, tvec_d):
 	""" Outputs the translation info of the ArUco marker
 
 		Parameters:
 			img (ndarray): Image to be written on the information
+			tvec (ndarray): Array with the x, y, and z positions 
+			tvec_d (ndarray): Array with the desired x, y, and z positions 
 	"""
 	x = tvec[0]
 	y = tvec[1]
 	z = tvec[2]
 
-	roll = euler[0]
-	pitch = euler[1]
-	yaw = euler[2]
-
 	x_d = tvec_d[0]
 	y_d = tvec_d[1]
 	z_d = tvec_d[2]
-
-	roll_d = euler_d[0]
-	pitch_d = euler_d[1]
-	yaw_d = euler_d[2]
 
 	error_x = x - x_d
 	error_y = y - y_d
@@ -66,23 +60,17 @@ def display_translation_info(img, tvec, euler, tvec_d, euler_d):
 	cv2.putText(img, error_y_str, (490, 75), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
 	cv2.putText(img, error_z_str, (490, 120), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
 
-def display_rotation_info(img, tvec, euler, tvec_d, euler_d):
+def display_rotation_info(img, euler, euler_d):
 	""" Outputs the translation info of the ArUco marker
 
 		Parameters:
 			img (ndarray): Image to be written on the information
+			euler (ndarray): Array with the roll, pitch, and yaw orientations 
+			euler_d (ndarray): Array with the desired roll, pitch, and yaw orientations 
 	"""	
-	x = tvec[0]
-	y = tvec[1]
-	z = tvec[2]
-
 	roll = euler[0]
 	pitch = euler[1]
 	yaw = euler[2]
-
-	x_d = tvec_d[0]
-	y_d = tvec_d[1]
-	z_d = tvec_d[2]
 
 	roll_d = euler_d[0]
 	pitch_d = euler_d[1]
@@ -116,14 +104,98 @@ def display_rotation_info(img, tvec, euler, tvec_d, euler_d):
 	cv2.putText(img, error_pitch_str, (490, 250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
 	cv2.putText(img, error_yaw_str, (490, 300), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
 
+def display_interpretation(img, tvec, euler, tvec_d, euler_d):
+	""" Outputs a message to the user/robot stating how to move
+
+		Parameters:
+			img (ndarray): Image to be written on the information
+			tvec (ndarray): Array with the x, y, and z positions 
+			euler (ndarray): Array with the roll, pitch, and yaw orientations 
+			tvec_d (ndarray): Array with the desired x, y, and z positions 
+			euler_d (ndarray): Array with the desired roll, pitch, and yaw orientations 
+	"""
+	TOLERANCE = 5 # milimeters
+
+	x = tvec[0]
+	y = tvec[1]
+	z = tvec[2]
+
+	roll = euler[0]
+	pitch = euler[1]
+	yaw = euler[2]
+
+	x_d = tvec_d[0]
+	y_d = tvec_d[1]
+	z_d = tvec_d[2]
+
+	roll_d = euler_d[0]
+	pitch_d = euler_d[1]
+	yaw_d = euler_d[2]
+
+	error_x = x - x_d
+	error_y = y - y_d
+	error_z = z - z_d
+
+	error_roll = roll - roll_d
+	error_pitch = pitch - pitch_d
+	error_yaw = yaw - yaw_d
+
+	message_right = 'Translate{0:4.0f}mm to the right'.format(abs(error_x))
+	message_left = 'Translate{0:4.0f}mm to the left'.format(abs(error_x))
+	message_x_success = 'You\'ve reached the desired position in x!'
+
+	message_up = 'Translate{0:4.0f}mm up'.format(abs(error_y))
+	message_down = 'Translate{0:4.0f}mm down'.format(abs(error_y))
+	message_y_success = 'You\'ve reached the desired position in y!'
+
+	message_frontwards = 'Translate{0:4.0f}mm frontwards'.format(abs(error_z))
+	message_backwards = 'Translate{0:4.0f}mm backwards'.format(abs(error_z))
+	message_z_success = 'You\'ve reached the desired position in z!'
+
+	message_roll = 'Rotate{0:4.0f} deg around y'.format(error_roll)
+	message_pitch = 'Rotate{0:4.0f} deg around x'.format(error_pitch)
+	message_yaw = 'Rotate{0:4.0f} deg around z'.format(error_yaw)
+
+	message_roll_success = 'You\'ve reached the desired position in roll!'
+	message_pitch_success = 'You\'ve reached the desired position in pitch!'
+	message_yaw_success = 'You\'ve reached the desired position in yaw!'
+
+	if error_x >= -TOLERANCE and error_x <= TOLERANCE:
+		cv2.putText(img, message_x_success, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error_x > TOLERANCE:
+		cv2.putText(img, message_left, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error_x < TOLERANCE:
+		cv2.putText(img, message_right, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
+	if error_y >= -TOLERANCE and error_y <= TOLERANCE:
+		cv2.putText(img, message_y_success, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error_y > TOLERANCE:
+		cv2.putText(img, message_up, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error_y < TOLERANCE:
+		cv2.putText(img, message_down, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	
+	if error_z >= -TOLERANCE and error_z <= TOLERANCE:
+		cv2.putText(img, message_z_success, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error_z > TOLERANCE:
+		cv2.putText(img, message_frontwards, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error_z < TOLERANCE:
+		cv2.putText(img, message_backwards, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
+	if error_roll > TOLERANCE or error_roll < TOLERANCE:
+		cv2.putText(img, message_roll, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	if error_pitch > TOLERANCE or error_pitch < TOLERANCE:
+			cv2.putText(img, message_pitch, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	if error_yaw > TOLERANCE or error_yaw < TOLERANCE:
+				cv2.putText(img, message_yaw, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
 def display_info_on_screen(img, tvec, euler, tvec_d, euler_d):
 	""" Outputs the pose and desired pose of the ArUco marker on screen
 		Parameters:
 			img (ndarray): Image to be written on the information
-			tvec (ndarray): Array with the x, y, and z translations 
-			euler (ndarray): Array with the roll, pitch, and yaw rotations 
-			tvec_d (ndarray): Array with the desired x, y, and z translations 
-			euler_d (ndarray): Array with the desired roll, pitch, and yaw rotations 
+			tvec (ndarray): Array with the x, y, and z positions 
+			euler (ndarray): Array with the roll, pitch, and yaw orientations 
+			tvec_d (ndarray): Array with the desired x, y, and z positions 
+			euler_d (ndarray): Array with the desired roll, pitch, and yaw orientations 
 	"""
 	x = tvec[0]
 	y = tvec[1]
@@ -197,9 +269,9 @@ def display_pose_graphs(time, current_time, x, y, z, R, P, Y, axis):
 			x (list): List containing the x positions stored of the ArUco marker
 			y (list): List containing the y positions stored of the ArUco marker
 			z (list): List containing the z positions stored of the ArUco marker
-			R (list): List containing the roll angle stored of the ArUco marker
-			P (list): List containing the pitch angle stored of the ArUco marker
-			Y (list): List containing the yaw angle stored of the ArUco marker
+			R (list): List containing the roll orientation stored of the ArUco marker
+			P (list): List containing the pitch orientation stored of the ArUco marker
+			Y (list): List containing the yaw orientation stored of the ArUco marker
 			axis (ndarray): Axis to be displayed on
 	"""
 	axis[0].plot(time, x, color='b', label='x')
@@ -213,6 +285,13 @@ def display_pose_graphs(time, current_time, x, y, z, R, P, Y, axis):
 	axis[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
 	axis[1].set_xlim(left=max(0, current_time-10), right=current_time+10)
 
+	if len(x) == 1:
+		axis[0].legend(loc='upper right')
+		axis[0].set_ylabel('Camera \nposition (mm)')
+
+		axis[1].legend(loc='upper right')
+		axis[1].set_xlabel('Time (s)')
+		axis[1].set_ylabel('Camera \norientation (deg)')
 
 def display_error_graphs(time, current_time, x_e, y_e, z_e, R_e, P_e, Y_e, axis):
 	""" Draws the pose graphs of the ArUco marker
@@ -231,9 +310,17 @@ def display_error_graphs(time, current_time, x_e, y_e, z_e, R_e, P_e, Y_e, axis)
 	axis[0].plot(time, y_e, color='r', label='Error y')
 	axis[0].plot(time, z_e, color='b', label='Error z')
 
-	axis[1].plot(time, R_e, color='g', label='Error roll')
-	axis[1].plot(time, P_e, color='r', label='Error pitch')
-	axis[1].plot(time, Y_e, color='b', label='Error yaw')
+	axis[1].plot(time, R_e, color='g', label='Error R')
+	axis[1].plot(time, P_e, color='r', label='Error P')
+	axis[1].plot(time, Y_e, color='b', label='Error Y')
 
 	axis[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
 	axis[1].set_xlim(left=max(0, current_time-10), right=current_time+10)
+
+	if len(x_e) == 1:
+		axis[0].legend(loc='upper right')
+		axis[0].set_ylabel('Camera \nposition error (mm)')
+
+		axis[1].legend(loc='upper right')
+		axis[1].set_xlabel('Time (s)')
+		axis[1].set_ylabel('Camera \norientation error (deg)')

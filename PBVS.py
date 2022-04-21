@@ -50,8 +50,8 @@ x_e_list, y_e_list, z_e_list = [], [], []
 roll_e_list, pitch_e_list, yaw_e_list = [], [], []
 time_list = []
 
-figure1, ax1 = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
-figure2, ax2 = plt.subplots(nrows=2, ncols=1, figsize=(7, 3))
+figure1, ax1 = plt.subplots(nrows=2, ncols=1, figsize=(7, 5))
+figure2, ax2 = plt.subplots(nrows=2, ncols=1, figsize=(7, 5))
 
 start_time = time.time()
 
@@ -165,42 +165,37 @@ while True:
 
 		time_list.append(current_time)
 
-		# GUI.display_pose_graphs(time=time_list,
-		# 						current_time=current_time,
-		# 						x=x_list,
-		# 						y=y_list,
-		# 						z=z_list,
-		# 						R= roll_list,
-		# 						P=pitch_list,
-		# 						Y=yaw_list,
-		# 						axis=ax1)
+		GUI.display_pose_graphs(time=time_list,
+								current_time=current_time,
+								x=x_list,
+								y=y_list,
+								z=z_list,
+								R= roll_list,
+								P=pitch_list,
+								Y=yaw_list,
+								axis=ax1)
 
-		# GUI.display_error_graphs(time=time_list,
-		# 						current_time=current_time,
-		# 						x_e=x_e_list,
-		# 						y_e=y_e_list,
-		# 						z_e=z_e_list,
-		# 						R_e= roll_e_list,
-		# 						P_e=pitch_e_list,
-		# 						Y_e=yaw_e_list,
-		# 						axis=ax2)
+		GUI.display_error_graphs(time=time_list,
+								current_time=current_time,
+								x_e=x_e_list,
+								y_e=y_e_list,
+								z_e=z_e_list,
+								R_e= roll_e_list,
+								P_e=pitch_e_list,
+								Y_e=yaw_e_list,
+								axis=ax2)
 
-		# Display just once the legend 
-		if len(x_list) == 1:  
-			ax1[0].legend(loc='upper right')
-			ax1[1].legend(loc='upper right')
-			ax2[0].legend(loc='upper right')
-			ax2[1].legend(loc='upper right')
-
-		# plt.pause(0.001) # To constantly refresh the graph
+		plt.pause(0.001) # To constantly refresh the graph
 
 		GUI.display_translation_info(img=img_info,
 								   tvec=realworld_tvec,
-								   euler=estimated_euler_angles,
-								   tvec_d=desired_realworld_tvec,
-								   euler_d=desired_euler_angles)
+								   tvec_d=desired_realworld_tvec)
 
 		GUI.display_rotation_info(img=img_info,
+								  euler=estimated_euler_angles,
+								  euler_d=desired_euler_angles)
+
+		GUI.display_interpretation(img=img_info,
 								   tvec=realworld_tvec,
 								   euler=estimated_euler_angles,
 								   tvec_d=desired_realworld_tvec,

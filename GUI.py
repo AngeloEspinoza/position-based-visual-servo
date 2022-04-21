@@ -8,10 +8,13 @@ def display_background(img):
 		Parameters:
 			img (ndarray): Image to be displayed
 	"""
-	cv2.line(img, (0, 150), (600, 150), (255, 255, 255), 3)
-	cv2.line(img, (0, 320), (600, 320), (255, 255, 255), 3)
-	cv2.line(img, (200, 0), (200, 320), (255, 255, 255), 3)
+	# Flip by default shape to discharge in the correct variables
+	x, y = img.shape[:2][::-1]
 
+	cv2.line(img, (0, y//4), (x, y//4), (255, 255, 255), 3)
+	cv2.line(img, (0, y//2+20), (x, y//2+20), (255, 255, 255), 3)
+	cv2.line(img, (x//3, 0), (x//3, y//2+20), (255, 255, 255), 3)
+	cv2.line(img, ((x//3)*2, 0), ((x//3)*2, y//2+20), (255, 255, 255), 3)
 
 def display_translation_info(img, tvec, euler, tvec_d, euler_d):
 	""" Outputs the translation info of the ArUco marker
@@ -39,21 +42,29 @@ def display_translation_info(img, tvec, euler, tvec_d, euler_d):
 	error_y = y - y_d
 	error_z = z - z_d
 
-	current_x_str = 'x: {0:4.0f}'.format(x)	
-	current_y_str = 'y: {0:4.0f}'.format(y)	
-	current_z_str = 'z: {0:4.0f}'.format(z)
+	current_x_str = 'x: {0:4.0f} mm'.format(x)	
+	current_y_str = 'y: {0:4.0f} mm'.format(y)	
+	current_z_str = 'z: {0:4.0f} mm'.format(z)
 
-	error_x_str = 'xe: {0:4.0f}'.format(error_x)
-	error_y_str = 'ye: {0:4.0f}'.format(error_y)
-	error_z_str = 'ze: {0:4.0f}'.format(error_z)
+	desired_x_str = 'xd: {0:4.0f} mm'.format(x_d)	
+	desired_y_str = 'yd: {0:4.0f} mm'.format(y_d)	
+	desired_z_str = 'zd: {0:4.0f} mm'.format(z_d)
+
+	error_x_str = 'xe: {0:4.0f} mm'.format(error_x)
+	error_y_str = 'ye: {0:4.0f} mm'.format(error_y)
+	error_z_str = 'ze: {0:4.0f} mm'.format(error_z)
 
 	cv2.putText(img, current_x_str, (10, 20), cv2.FONT_HERSHEY_PLAIN, 2, (100, 255, 0), 1, cv2.LINE_AA)
 	cv2.putText(img, current_y_str, (10, 70), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
 	cv2.putText(img, current_z_str, (10, 120), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
 
-	cv2.putText(img, error_x_str, (220, 20), cv2.FONT_HERSHEY_PLAIN, 2, (100, 255, 0), 1, cv2.LINE_AA)
-	cv2.putText(img, error_y_str, (220, 75), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
-	cv2.putText(img, error_z_str, (220, 120), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
+	cv2.putText(img, desired_x_str, (250, 20), cv2.FONT_HERSHEY_PLAIN, 2, (100, 255, 0), 1, cv2.LINE_AA)
+	cv2.putText(img, desired_y_str, (250, 75), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
+	cv2.putText(img, desired_z_str, (250, 120), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
+
+	cv2.putText(img, error_x_str, (490, 20), cv2.FONT_HERSHEY_PLAIN, 2, (100, 255, 0), 1, cv2.LINE_AA)
+	cv2.putText(img, error_y_str, (490, 75), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
+	cv2.putText(img, error_z_str, (490, 120), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
 
 def display_rotation_info(img, tvec, euler, tvec_d, euler_d):
 	""" Outputs the translation info of the ArUco marker
@@ -81,21 +92,29 @@ def display_rotation_info(img, tvec, euler, tvec_d, euler_d):
 	error_pitch = pitch - pitch_d
 	error_yaw = yaw - yaw_d
 
-	current_roll_str = 'R: {0:4.0f} '.format(roll)
-	current_pitch_str = 'P: {0:4.0f} '.format(pitch)
-	current_yaw_str = 'Y: {0:4.0f} '.format(yaw)
+	current_roll_str = 'R: {0:4.0f} deg'.format(roll)
+	current_pitch_str = 'P: {0:4.0f} deg'.format(pitch)
+	current_yaw_str = 'Y: {0:4.0f} deg'.format(yaw)
 
-	error_roll_str = 'Re: {0:4.0f}'.format(error_roll)
-	error_pitch_str = 'Pe: {0:4.0f}'.format(error_pitch)
-	error_yaw_str = 'Ye: {0:4.0f}'.format(error_yaw)
+	desired_roll_str = 'Rd: {0:4.0f} deg'.format(roll_d)
+	desired_pitch_str = 'Pd: {0:4.0f} deg'.format(pitch_d)
+	desired_yaw_str = 'Yd: {0:4.0f} deg'.format(yaw_d)
+
+	error_roll_str = 'Re: {0:4.0f} deg'.format(error_roll)
+	error_pitch_str = 'Pe: {0:4.0f} deg'.format(error_pitch)
+	error_yaw_str = 'Ye: {0:4.0f} deg'.format(error_yaw)
 
 	cv2.putText(img, current_roll_str, (10, 200), cv2.FONT_HERSHEY_PLAIN, 2, (100, 255, 0), 1, cv2.LINE_AA)
 	cv2.putText(img, current_pitch_str, (10, 250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
 	cv2.putText(img, current_yaw_str, (10, 300), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
 
-	cv2.putText(img, error_roll_str, (220, 200), cv2.FONT_HERSHEY_PLAIN, 2, (100, 255, 0), 1, cv2.LINE_AA)
-	cv2.putText(img, error_pitch_str, (220, 250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
-	cv2.putText(img, error_yaw_str, (220, 300), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
+	cv2.putText(img, desired_roll_str, (250, 200), cv2.FONT_HERSHEY_PLAIN, 2, (100, 255, 0), 1, cv2.LINE_AA)
+	cv2.putText(img, desired_pitch_str, (250, 250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
+	cv2.putText(img, desired_yaw_str, (250, 300), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
+
+	cv2.putText(img, error_roll_str, (490, 200), cv2.FONT_HERSHEY_PLAIN, 2, (100, 255, 0), 1, cv2.LINE_AA)
+	cv2.putText(img, error_pitch_str, (490, 250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 100, 255), 1, cv2.LINE_AA)
+	cv2.putText(img, error_yaw_str, (490, 300), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
 
 def display_info_on_screen(img, tvec, euler, tvec_d, euler_d):
 	""" Outputs the pose and desired pose of the ArUco marker on screen
@@ -169,3 +188,52 @@ def display_info_on_screen(img, tvec, euler, tvec_d, euler_d):
 	cv2.putText(img, current_roll_str, (5, 50), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 	cv2.putText(img, current_pitch_str, (5, 60), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 	cv2.putText(img, current_yaw_str, (5, 70), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
+
+def display_pose_graphs(time, current_time, x, y, z, R, P, Y, axis):
+	""" Draws the pose graphs of the ArUco marker
+
+		Parameters:
+			time (list): List containing the time elapsed 
+			x (list): List containing the x positions stored of the ArUco marker
+			y (list): List containing the y positions stored of the ArUco marker
+			z (list): List containing the z positions stored of the ArUco marker
+			R (list): List containing the roll angle stored of the ArUco marker
+			P (list): List containing the pitch angle stored of the ArUco marker
+			Y (list): List containing the yaw angle stored of the ArUco marker
+			axis (ndarray): Axis to be displayed on
+	"""
+	axis[0].plot(time, x, color='b', label='x')
+	axis[0].plot(time, y, color='g', label='y')
+	axis[0].plot(time, z, color='r', label='z')
+
+	axis[1].plot(time, R, color='g', label='R')
+	axis[1].plot(time, P, color='r', label='P')
+	axis[1].plot(time, Y, color='b', label='Y')
+
+	axis[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
+	axis[1].set_xlim(left=max(0, current_time-10), right=current_time+10)
+
+
+def display_error_graphs(time, current_time, x_e, y_e, z_e, R_e, P_e, Y_e, axis):
+	""" Draws the pose graphs of the ArUco marker
+
+		Parameters:
+			time (list): List containing the time elapsed 
+			x_e (list): List containing the x position error recorded of the ArUco marker
+			y_e (list): List containing the y position error recorded of the ArUco marker
+			z_e (list): List containing the z position error recorded of the ArUco marker
+			R_e (list): List containing the roll angle recorded of the ArUco marker
+			P_e (list): List containing the pitch angle recorded of the ArUco marker
+			Y_e (list): List containing the yaw angle recorded of the ArUco marker
+			axis (ndarray): Axis to be displayed on
+	"""
+	axis[0].plot(time, x_e, color='g', label='Error x')
+	axis[0].plot(time, y_e, color='r', label='Error y')
+	axis[0].plot(time, z_e, color='b', label='Error z')
+
+	axis[1].plot(time, R_e, color='g', label='Error roll')
+	axis[1].plot(time, P_e, color='r', label='Error pitch')
+	axis[1].plot(time, Y_e, color='b', label='Error yaw')
+
+	axis[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
+	axis[1].set_xlim(left=max(0, current_time-10), right=current_time+10)

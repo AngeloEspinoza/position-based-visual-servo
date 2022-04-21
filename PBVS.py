@@ -58,14 +58,14 @@ start_time = time.time()
 # Set up the GUI window to display the info
 root = 'PBVS - info'
 cv2.namedWindow(root)
-img_info = np.ones((600, 400, 3), np.uint8)
+img_info = np.ones((600, 700, 3), np.uint8)
 
 while True:
 	# Read frames of the camera
 	ret, frame = cap.read()
 
 	cv2.namedWindow(root)
-	img_info = np.ones((600, 400, 3), np.uint8)
+	img_info = np.ones((600, 700, 3), np.uint8)
 
 	# Convert image to gray scale
 	frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -146,6 +146,7 @@ while True:
 								   tvec_d=desired_realworld_tvec,
 								   euler_d=desired_euler_angles)
 
+		# Store pose, and pose error values to plot them
 		x_list.append(realworld_tvec[0])
 		y_list.append(realworld_tvec[1])
 		z_list.append(realworld_tvec[2])
@@ -164,41 +165,41 @@ while True:
 
 		time_list.append(current_time)
 
-		ax1[0].plot(time_list, x_list, color='b', label='x')
-		ax1[0].plot(time_list, y_list, color='g', label='y')
-		ax1[0].plot(time_list, z_list, color='r', label='z')
+		# GUI.display_pose_graphs(time=time_list,
+		# 						current_time=current_time,
+		# 						x=x_list,
+		# 						y=y_list,
+		# 						z=z_list,
+		# 						R= roll_list,
+		# 						P=pitch_list,
+		# 						Y=yaw_list,
+		# 						axis=ax1)
 
-		ax1[1].plot(time_list, roll_list, color='g', label='roll')
-		ax1[1].plot(time_list, pitch_list, color='r', label='pitch')
-		ax1[1].plot(time_list, yaw_list, color='b', label='yaw')
+		# GUI.display_error_graphs(time=time_list,
+		# 						current_time=current_time,
+		# 						x_e=x_e_list,
+		# 						y_e=y_e_list,
+		# 						z_e=z_e_list,
+		# 						R_e= roll_e_list,
+		# 						P_e=pitch_e_list,
+		# 						Y_e=yaw_e_list,
+		# 						axis=ax2)
 
-		ax2[0].plot(time_list, x_e_list, color='g', label='Error x')
-		ax2[0].plot(time_list, y_e_list, color='r', label='Error y')
-		ax2[0].plot(time_list, z_e_list, color='b', label='Error z')
-
-		ax2[1].plot(time_list, roll_e_list, color='g', label='Error roll')
-		ax2[1].plot(time_list, pitch_e_list, color='r', label='Error pitch')
-		ax2[1].plot(time_list, yaw_e_list, color='b', label='Error yaw')
-
-		ax1[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
-		ax1[1].set_xlim(left=max(0, current_time-10), right=current_time+10)
-
-		ax2[0].set_xlim(left=max(0, current_time-10), right=current_time+10)
-		ax2[1].set_xlim(left=max(0, current_time-10), right=current_time+10)
-
+		# Display just once the legend 
 		if len(x_list) == 1:  
 			ax1[0].legend(loc='upper right')
 			ax1[1].legend(loc='upper right')
 			ax2[0].legend(loc='upper right')
 			ax2[1].legend(loc='upper right')
 
-		plt.pause(0.001)
+		# plt.pause(0.001) # To constantly refresh the graph
 
 		GUI.display_translation_info(img=img_info,
 								   tvec=realworld_tvec,
 								   euler=estimated_euler_angles,
 								   tvec_d=desired_realworld_tvec,
 								   euler_d=desired_euler_angles)
+
 		GUI.display_rotation_info(img=img_info,
 								   tvec=realworld_tvec,
 								   euler=estimated_euler_angles,
@@ -207,7 +208,6 @@ while True:
 	
 	GUI.display_background(img_info)
 	cv2.imshow(root, img_info)
-
 	cv2.imshow('PVBS - RGB', frame)
 
 	# If 'q' pressed, save the current pose of the ArUco marker 

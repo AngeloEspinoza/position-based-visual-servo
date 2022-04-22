@@ -161,31 +161,39 @@ def display_interpretation(img, tvec, euler, tvec_d, euler_d):
 	message_yaw_success = 'You\'ve reached the desired position in yaw!'
 
 	if error_x >= -TOLERANCE and error_x <= TOLERANCE:
-		cv2.putText(img, message_x_success, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+		cv2.putText(img, message_x_success, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
 	elif error_x > TOLERANCE:
 		cv2.putText(img, message_left, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 	elif error_x < TOLERANCE:
 		cv2.putText(img, message_right, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
 	if error_y >= -TOLERANCE and error_y <= TOLERANCE:
-		cv2.putText(img, message_y_success, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+		cv2.putText(img, message_y_success, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
 	elif error_y > TOLERANCE:
 		cv2.putText(img, message_up, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 	elif error_y < TOLERANCE:
 		cv2.putText(img, message_down, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 	
 	if error_z >= -TOLERANCE and error_z <= TOLERANCE:
-		cv2.putText(img, message_z_success, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+		cv2.putText(img, message_z_success, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
 	elif error_z > TOLERANCE:
 		cv2.putText(img, message_frontwards, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 	elif error_z < TOLERANCE:
 		cv2.putText(img, message_backwards, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
-	if error_roll > TOLERANCE or error_roll < TOLERANCE:
+	if error_roll >= -TOLERANCE and error_roll <= TOLERANCE:
+		cv2.putText(img, message_roll_success, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
+	elif error_roll > TOLERANCE or error_roll < TOLERANCE:
 		cv2.putText(img, message_roll, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	if error_pitch > TOLERANCE or error_pitch < TOLERANCE:
+
+	if error_pitch >= -TOLERANCE and error_pitch <= TOLERANCE:
+		cv2.putText(img, message_pitch_success, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
+	elif error_pitch > TOLERANCE or error_pitch < TOLERANCE:
 			cv2.putText(img, message_pitch, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	if error_yaw > TOLERANCE or error_yaw < TOLERANCE:
+	
+	if error_yaw >= -TOLERANCE and error_yaw <= TOLERANCE:
+		cv2.putText(img, message_yaw_success, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
+	elif error_yaw > TOLERANCE or error_yaw < TOLERANCE:
 				cv2.putText(img, message_yaw, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
 def display_info_on_screen(img, tvec, euler, tvec_d, euler_d):

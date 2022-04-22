@@ -176,20 +176,20 @@ while True:
 								axis=ax1)
 
 		GUI.display_error_graphs(time=time_list,
-								current_time=current_time,
-								x_e=x_e_list,
-								y_e=y_e_list,
-								z_e=z_e_list,
-								R_e= roll_e_list,
-								P_e=pitch_e_list,
-								Y_e=yaw_e_list,
-								axis=ax2)
+								 current_time=current_time,
+								 x_e=x_e_list,
+								 y_e=y_e_list,
+								 z_e=z_e_list,
+								 R_e= roll_e_list,
+								 P_e=pitch_e_list,
+								 Y_e=yaw_e_list,
+								 axis=ax2)
 
 		plt.pause(0.001) # To constantly refresh the graph
 
 		GUI.display_translation_info(img=img_info,
-								   tvec=realworld_tvec,
-								   tvec_d=desired_realworld_tvec)
+								    tvec=realworld_tvec,
+								    tvec_d=desired_realworld_tvec)
 
 		GUI.display_rotation_info(img=img_info,
 								  euler=estimated_euler_angles,

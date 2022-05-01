@@ -8,17 +8,33 @@ import os
 import time
 import GUI
 
-def draw_axis(img, corners, img_pts):
-    corner = tuple(corners[0].ravel().astype(int))
-    cv2.line(img, corner, tuple(img_pts[0].ravel().astype(int)), (0, 0, 255), 3)
-    cv2.line(img, corner, tuple(img_pts[1].ravel().astype(int)), (0, 255, 0), 3)
-    cv2.line(img, corner, tuple(img_pts[2].ravel().astype(int)), (255, 0, 0), 3)
+def draw_axis(img, start_pts, img_pts):
+    start_point = list(start_pts[0].ravel().astype(int))
+    end_point_x = list(img_pts[0].ravel().astype(int))
+    end_point_y = list(img_pts[1].ravel().astype(int))
+    end_point_z = list(img_pts[2].ravel().astype(int))
+
+    cv2.arrowedLine(img, start_point, end_point_x, (0, 0, 255), 2)
+    cv2.arrowedLine(img, start_point, end_point_y, (0, 255, 0), 2)
+    cv2.arrowedLine(img, start_point, end_point_z, (255, 0, 0), 2)
+
+    end_point_x[0] = end_point_x[0] + 10
+    end_point_y[1] = end_point_y[1] - 10
+    end_point_z[1] = end_point_z[1] + 10
+    end_point_z[0] = end_point_z[0] - 10
+
+    cv2.putText(img, 'x', end_point_x, cv2.FONT_HERSHEY_PLAIN,
+     0.8, (0, 0, 255), 1, cv2.LINE_AA)
+    cv2.putText(img, 'y', end_point_y, cv2.FONT_HERSHEY_PLAIN,
+     0.8, (0, 255, 0), 1, cv2.LINE_AA)
+    cv2.putText(img, 'z', end_point_z, cv2.FONT_HERSHEY_PLAIN,
+     0.8, (255, 0, 0), 1, cv2.LINE_AA)
 
 MARKER_SIZE = 95 # milimeters
 BLUE = (255, 0, 0)
 
 # Read intrinsic parameters of the camera
-with np.load('camera_matrix.npz') as X:
+with np.load('bin/camera_matrix.npz') as X:
 	K, dist, rvecs, tvecs = [X[i] for i in ('camera_matrix',
 											'dist',
 											'rvecs',
@@ -78,9 +94,9 @@ while True:
 	# Verify at least one ArUco marker was detected
 	if len(corners) > 0 or ids is not None:
 		try:
-			desired_pose = np.load('desired_pose.npy')
-			desired_realworld_tvec = np.load('desired_realworld_tvec.npy')
-			desired_euler_angles = np.load('desired_euler_angles.npy')
+			desired_pose = np.load('bin/desired_pose.npy')
+			desired_realworld_tvec = np.load('bin/desired_realworld_tvec.npy')
+			desired_euler_angles = np.load('bin/desired_euler_angles.npy')
 		except FileNotFoundError:
 			print('[INFO]: FileNotFoundError handled, check if all .npy files were loaded')
 			pass
@@ -211,9 +227,9 @@ while True:
 		desired_euler_angles = estimated_euler_angles
 		desired_realworld_tvec = realworld_tvec
 
-		np.save('desired_pose.npy', desired_pose)
-		np.save('desired_euler_angles.npy', desired_euler_angles)
-		np.save('desired_realworld_tvec.npy', desired_realworld_tvec)
+		np.save('bin/desired_pose.npy', desired_pose)
+		np.save('bin/desired_euler_angles.npy', desired_euler_angles)
+		np.save('bin/desired_realworld_tvec.npy', desired_realworld_tvec)
 
 		print('[INFO]: ArUco marker pose saved')
 

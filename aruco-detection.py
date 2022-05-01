@@ -11,7 +11,7 @@ import time
 MARKER_SIZE = 95 # milimeters
 BLUE = (255, 0, 0)
 
-with np.load('camera_matrix.npz') as X:
+with np.load('/bin/camera_matrix.npz') as X:
 	K, dist, rvecs, tvecs = [X[i] for i in ('camera_matrix',
 											'dist',
 											'rvecs',
@@ -67,7 +67,7 @@ while True:
 		rvec = rvec_list_all[0][0]
 		tvec = tvec_list_all[0][0]
 
-		Cd_T_G = np.load('Cd_T_G.npy')
+		Cd_T_G = np.load('/bin/Cd_T_G.npy')
 
 		current_time = time.time() - start_time
 
@@ -97,12 +97,6 @@ while True:
 			C_Te_G[:3, :3] = R
 			C_Te_G[:3, 3] = realworld_tvec
 
-			print(realworld_tvec)
-
-			# print('----------')
-			# print('C_Te_G = {}'.format(C_Te_G))
-			# print('----------')
-			
 			# Required motion
 			T_delta = C_Te_G @ np.linalg.inv(Cd_T_G)
 
@@ -122,11 +116,8 @@ while True:
 		cv2.putText(frame, rvec_str_pitch, (5, 60), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 		cv2.putText(frame, rvec_str_yaw, (5, 70), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 
-		# print(R)
 		# Clear terminal
 		os.system('cls')
-
-		# print(rvec_list_all)
 
 		x.append(realworld_tvec[0])
 		y.append(realworld_tvec[1])
@@ -138,26 +129,25 @@ while True:
 
 		time_list.append(current_time)
 
-		# axis[0].plot(time_list, x, color='b', label='x')
-		# axis[0].plot(time_list, y, color='g', label='y')
-		# axis[0].plot(time_list, z, color='r', label='z')
+		axis[0].plot(time_list, x, color='b', label='x')
+		axis[0].plot(time_list, y, color='g', label='y')
+		axis[0].plot(time_list, z, color='r', label='z')
 
-		# axis[1].plot(time_list, roll_list, color='g', label='roll')
-		# axis[1].plot(time_list, pitch_list, color='r', label='pitch')
-		# axis[1].plot(time_list, yaw_list, color='b', label='yaw')
+		axis[1].plot(time_list, roll_list, color='g', label='roll')
+		axis[1].plot(time_list, pitch_list, color='r', label='pitch')
+		axis[1].plot(time_list, yaw_list, color='b', label='yaw')
 
-		# if len(x) == 1:  
-		# 	axis[0].legend(loc='upper right')
-		# 	axis[1].legend(loc='upper right')
+		if len(x) == 1:  
+			axis[0].legend(loc='upper right')
+			axis[1].legend(loc='upper right')
 
-		# plt.pause(0.001)
+		plt.pause(0.001)
 		
 	cv2.imshow('Aruco Detection - RGB', frame)
-	# cv2.imshow('Aruco Detection - Gray', frame_gray)
 
 	if cv2.waitKey(1) & 0xFF == ord('q'):
 		Cd_T_G = C_Te_G
-		np.save('Cd_T_G.npy', Cd_T_G)
+		np.save('/bin/Cd_T_G.npy', Cd_T_G)
 	# If ESC pressed exit
 	if cv2.waitKey(1) & 0xFF == 27:
 		break

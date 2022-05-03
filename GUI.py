@@ -114,7 +114,8 @@ def display_interpretation(img, tvec, euler, tvec_d, euler_d):
 			tvec_d (ndarray): Array with the desired x, y, and z positions 
 			euler_d (ndarray): Array with the desired roll, pitch, and yaw orientations 
 	"""
-	TOLERANCE = 5 # milimeters
+	global TOLERANCE
+	TOLERANCE = 10 # milimeters
 
 	x = tvec[0]
 	y = tvec[1]
@@ -139,62 +140,82 @@ def display_interpretation(img, tvec, euler, tvec_d, euler_d):
 	error_roll = roll - roll_d
 	error_pitch = pitch - pitch_d
 	error_yaw = yaw - yaw_d
+	
+	if is_success_roll(img, error_roll):
+		if is_success_pitch(img, error_pitch):
+			if is_success_yaw(img, error_yaw):
+				if is_success_x(img, error_x):
+					if is_success_y(img, error_y):
+						is_success_z(img, error_z)
 
-	message_right = 'Translate{0:4.0f}mm to the right'.format(abs(error_x))
-	message_left = 'Translate{0:4.0f}mm to the left'.format(abs(error_x))
+def is_success_x(img, error):
+	message_right = 'Translate{0:4.0f}mm to the right'.format(abs(error))
+	message_left = 'Translate{0:4.0f}mm to the left'.format(abs(error))
 	message_x_success = 'You\'ve reached the desired position in x!'
 
-	message_up = 'Translate{0:4.0f}mm up'.format(abs(error_y))
-	message_down = 'Translate{0:4.0f}mm down'.format(abs(error_y))
+	if error >= -TOLERANCE and error <= TOLERANCE:
+		cv2.putText(img, message_x_success, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
+		return True
+	elif error > TOLERANCE:
+		cv2.putText(img, message_left, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error < TOLERANCE:
+		cv2.putText(img, message_right, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
+def is_success_y(img, error):
+	message_up = 'Translate{0:4.0f}mm up'.format(abs(error))
+	message_down = 'Translate{0:4.0f}mm down'.format(abs(error))
 	message_y_success = 'You\'ve reached the desired position in y!'
 
-	message_frontwards = 'Translate{0:4.0f}mm frontwards'.format(abs(error_z))
-	message_backwards = 'Translate{0:4.0f}mm backwards'.format(abs(error_z))
+	if error >= -TOLERANCE and error <= TOLERANCE:
+		cv2.putText(img, message_y_success, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
+		return True
+	elif error > TOLERANCE:
+		cv2.putText(img, message_up, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error < TOLERANCE:
+		cv2.putText(img, message_down, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
+def is_success_z(img, error):
+	message_frontwards = 'Translate{0:4.0f}mm frontwards'.format(abs(error))
+	message_backwards = 'Translate{0:4.0f}mm backwards'.format(abs(error))
 	message_z_success = 'You\'ve reached the desired position in z!'
 
-	message_roll = 'Rotate{0:4.0f} deg around y'.format(error_roll)
-	message_pitch = 'Rotate{0:4.0f} deg around x'.format(error_pitch)
-	message_yaw = 'Rotate{0:4.0f} deg around z'.format(error_yaw)
+	if error >= -TOLERANCE and error <= TOLERANCE:
+		cv2.putText(img, message_z_success, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
+		return True
+	elif error > TOLERANCE:
+		cv2.putText(img, message_frontwards, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error < TOLERANCE:
+		cv2.putText(img, message_backwards, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
+def is_success_roll(img, error):
+	message_roll = 'Rotate{0:4.0f} deg around y'.format(error)
 	message_roll_success = 'You\'ve reached the desired position in roll!'
+
+	if error >= -TOLERANCE and error <= TOLERANCE:
+		cv2.putText(img, message_roll_success, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
+		return True
+	elif error > TOLERANCE or error < TOLERANCE:
+		cv2.putText(img, message_roll, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
+def is_success_pitch(img, error):
+	message_pitch = 'Rotate{0:4.0f} deg around x'.format(error)
 	message_pitch_success = 'You\'ve reached the desired position in pitch!'
+
+	if error >= -TOLERANCE and error <= TOLERANCE:
+		cv2.putText(img, message_pitch_success, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
+		return True
+	elif error > TOLERANCE or error < TOLERANCE:
+			cv2.putText(img, message_pitch, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	
+def is_success_yaw(img, error):
+	message_yaw = 'Rotate{0:4.0f} deg around z'.format(error)
 	message_yaw_success = 'You\'ve reached the desired position in yaw!'
 
-	if error_x >= -TOLERANCE and error_x <= TOLERANCE:
-		cv2.putText(img, message_x_success, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
-	elif error_x > TOLERANCE:
-		cv2.putText(img, message_left, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	elif error_x < TOLERANCE:
-		cv2.putText(img, message_right, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-
-	if error_y >= -TOLERANCE and error_y <= TOLERANCE:
-		cv2.putText(img, message_y_success, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
-	elif error_y > TOLERANCE:
-		cv2.putText(img, message_up, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	elif error_y < TOLERANCE:
-		cv2.putText(img, message_down, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	
-	if error_z >= -TOLERANCE and error_z <= TOLERANCE:
-		cv2.putText(img, message_z_success, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
-	elif error_z > TOLERANCE:
-		cv2.putText(img, message_frontwards, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	elif error_z < TOLERANCE:
-		cv2.putText(img, message_backwards, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-
-	if error_roll >= -TOLERANCE and error_roll <= TOLERANCE:
-		cv2.putText(img, message_roll_success, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
-	elif error_roll > TOLERANCE or error_roll < TOLERANCE:
-		cv2.putText(img, message_roll, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-
-	if error_pitch >= -TOLERANCE and error_pitch <= TOLERANCE:
-		cv2.putText(img, message_pitch_success, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
-	elif error_pitch > TOLERANCE or error_pitch < TOLERANCE:
-			cv2.putText(img, message_pitch, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	
-	if error_yaw >= -TOLERANCE and error_yaw <= TOLERANCE:
-		cv2.putText(img, message_yaw_success, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
-	elif error_yaw > TOLERANCE or error_yaw < TOLERANCE:
-				cv2.putText(img, message_yaw, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	if error >= -TOLERANCE and error <= TOLERANCE:
+		cv2.putText(img, message_yaw_success, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
+		return True
+	elif error > TOLERANCE or error < TOLERANCE:
+				cv2.putText(img, message_yaw, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
 def display_info_on_screen(img, tvec, euler, tvec_d, euler_d):
 	""" Outputs the pose and desired pose of the ArUco marker on screen

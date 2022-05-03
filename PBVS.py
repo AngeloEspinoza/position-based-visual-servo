@@ -44,7 +44,7 @@ with np.load('bin/camera_matrix.npz') as X:
 ARUCO_DICT = aruco.getPredefinedDictionary(aruco.DICT_4X4_250)
 
 # Define camera to use and set resolution and frame rate
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 cap.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc('M','J','P','G'))
 
 # Define coordinates in object coordinate space (3D space)

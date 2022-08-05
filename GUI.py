@@ -3,10 +3,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def display_background(img):
-	""" Outputs the background lines for the GUI
+	"""Outputs the background lines for the GUI.
 
-		Parameters:
-			img (ndarray): Image to be displayed
+	Parameters
+	----------
+	img : array-like
+		Image to be displayed.
+
+	Returns
+	-------
+	None
 	"""
 	# Flip by default shape to discharge in the correct variables
 	x, y = img.shape[:2][::-1]
@@ -17,12 +23,20 @@ def display_background(img):
 	cv2.line(img, ((x//3)*2, 0), ((x//3)*2, y//2+20), (255, 255, 255), 3)
 
 def display_translation_info(img, tvec, tvec_d):
-	""" Outputs the translation info of the ArUco marker
+	"""Outputs the translation info of the ArUco marker.
 
-		Parameters:
-			img (ndarray): Image to be written on the information
-			tvec (ndarray): Array with the x, y, and z positions 
-			tvec_d (ndarray): Array with the desired x, y, and z positions 
+	Parameters
+	----------
+	img : array-like
+		Image to be written on the information.
+	tvec : array-like
+		Array with the x, y, and z positions.
+	tvec_d : array-like
+		Array with the desired x, y, and z positions.
+
+	Returns
+	-------
+	None
 	"""
 	x = tvec[0]
 	y = tvec[1]
@@ -61,12 +75,20 @@ def display_translation_info(img, tvec, tvec_d):
 	cv2.putText(img, error_z_str, (490, 120), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
 
 def display_rotation_info(img, euler, euler_d):
-	""" Outputs the translation info of the ArUco marker
+	"""Outputs the translation info of the ArUco marker.
 
-		Parameters:
-			img (ndarray): Image to be written on the information
-			euler (ndarray): Array with the roll, pitch, and yaw orientations 
-			euler_d (ndarray): Array with the desired roll, pitch, and yaw orientations 
+	Parameters
+	----------
+	img : array-like
+		Image to be written on the information.
+	euler : array-like:
+		Array with the roll, pitch, and yaw orientations. 
+	euler_d : array-like
+		Array with the desired roll, pitch, and yaw orientations.
+
+	Returns
+	-------
+	None
 	"""	
 	roll = euler[0]
 	pitch = euler[1]
@@ -105,17 +127,28 @@ def display_rotation_info(img, euler, euler_d):
 	cv2.putText(img, error_yaw_str, (490, 300), cv2.FONT_HERSHEY_PLAIN, 2, (255, 100, 0), 1, cv2.LINE_AA)
 
 def display_interpretation(img, tvec, euler, tvec_d, euler_d):
-	""" Outputs a message to the user/robot stating how to move
+	"""Outputs a message to the user/robot stating how to move.
 
-		Parameters:
-			img (ndarray): Image to be written on the information
-			tvec (ndarray): Array with the x, y, and z positions 
-			euler (ndarray): Array with the roll, pitch, and yaw orientations 
-			tvec_d (ndarray): Array with the desired x, y, and z positions 
-			euler_d (ndarray): Array with the desired roll, pitch, and yaw orientations 
+	Parameters
+	----------
+	img : array-like
+		Image to be written on the information.
+	tvec : array-like
+		Array with the x, y, and z positions. 
+	euler : array-like
+		Array with the roll, pitch, and yaw orientations. 
+	tvec_d : array-like
+		Array with the desired x, y, and z positions. 
+	euler_d : array-like
+		Array with the desired roll, pitch, and yaw orientations.
+
+	Returns
+	-------
+	None
 	"""
-	global TOLERANCE
-	TOLERANCE = 10 # milimeters
+	global MILIMETERS_TOLERANCE, DEGREES_TOLERANCE
+	MILIMETERS_TOLERANCE = 10 # milimeters
+	DEGREES_TOLERANCE = 10 # degrees
 
 	x = tvec[0]
 	y = tvec[1]
@@ -149,82 +182,99 @@ def display_interpretation(img, tvec, euler, tvec_d, euler_d):
 						is_success_z(img, error_z)
 
 def is_success_x(img, error):
+	"""Displays the success message for the x-axis."""
 	message_right = 'Translate{0:4.0f}mm to the right'.format(abs(error))
 	message_left = 'Translate{0:4.0f}mm to the left'.format(abs(error))
 	message_x_success = 'You\'ve reached the desired position in x!'
 
-	if error >= -TOLERANCE and error <= TOLERANCE:
+	if error >= -MILIMETERS_TOLERANCE and error <= MILIMETERS_TOLERANCE:
 		cv2.putText(img, message_x_success, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
 		return True
-	elif error > TOLERANCE:
+	elif error > MILIMETERS_TOLERANCE:
 		cv2.putText(img, message_left, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	elif error < TOLERANCE:
+	elif error < MILIMETERS_TOLERANCE:
 		cv2.putText(img, message_right, (10, 430), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
 def is_success_y(img, error):
+	"""Displays the success message for the y-axis."""
 	message_up = 'Translate{0:4.0f}mm up'.format(abs(error))
 	message_down = 'Translate{0:4.0f}mm down'.format(abs(error))
 	message_y_success = 'You\'ve reached the desired position in y!'
 
-	if error >= -TOLERANCE and error <= TOLERANCE:
+	if error >= -MILIMETERS_TOLERANCE and error <= MILIMETERS_TOLERANCE:
 		cv2.putText(img, message_y_success, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
 		return True
-	elif error > TOLERANCE:
-		cv2.putText(img, message_up, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	elif error < TOLERANCE:
+	elif error > MILIMETERS_TOLERANCE:
 		cv2.putText(img, message_down, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+	elif error < MILIMETERS_TOLERANCE:
+		cv2.putText(img, message_up, (10, 450), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
 def is_success_z(img, error):
+	"""Displays the success message for the z-axis."""
 	message_frontwards = 'Translate{0:4.0f}mm frontwards'.format(abs(error))
 	message_backwards = 'Translate{0:4.0f}mm backwards'.format(abs(error))
 	message_z_success = 'You\'ve reached the desired position in z!'
 
-	if error >= -TOLERANCE and error <= TOLERANCE:
+	if error >= -MILIMETERS_TOLERANCE and error <= MILIMETERS_TOLERANCE:
 		cv2.putText(img, message_z_success, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
 		return True
-	elif error > TOLERANCE:
+	elif error > MILIMETERS_TOLERANCE:
 		cv2.putText(img, message_frontwards, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
-	elif error < TOLERANCE:
+	elif error < MILIMETERS_TOLERANCE:
 		cv2.putText(img, message_backwards, (10, 470), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
 def is_success_roll(img, error):
+	"""Displays the success message for the roll angle."""	
 	message_roll = 'Rotate{0:4.0f} deg around y'.format(error)
 	message_roll_success = 'You\'ve reached the desired position in roll!'
 
-	if error >= -TOLERANCE and error <= TOLERANCE:
+	if error >= -DEGREES_TOLERANCE and error <= DEGREES_TOLERANCE:
 		cv2.putText(img, message_roll_success, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
 		return True
-	elif error > TOLERANCE or error < TOLERANCE:
+	elif error > DEGREES_TOLERANCE or error < DEGREES_TOLERANCE:
 		cv2.putText(img, message_roll, (10, 350), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
 def is_success_pitch(img, error):
+	"""Displays the success message for the pitch angle."""
 	message_pitch = 'Rotate{0:4.0f} deg around x'.format(error)
 	message_pitch_success = 'You\'ve reached the desired position in pitch!'
 
-	if error >= -TOLERANCE and error <= TOLERANCE:
+	if error >= -DEGREES_TOLERANCE and error <= DEGREES_TOLERANCE:
 		cv2.putText(img, message_pitch_success, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
 		return True
-	elif error > TOLERANCE or error < TOLERANCE:
+	elif error > DEGREES_TOLERANCE or error < DEGREES_TOLERANCE:
 			cv2.putText(img, message_pitch, (10, 370), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 	
 def is_success_yaw(img, error):
+	"""Displays the success message for the yaw angle."""	
 	message_yaw = 'Rotate{0:4.0f} deg around z'.format(error)
 	message_yaw_success = 'You\'ve reached the desired position in yaw!'
 
-	if error >= -TOLERANCE and error <= TOLERANCE:
+	if error >= -DEGREES_TOLERANCE and error <= DEGREES_TOLERANCE:
 		cv2.putText(img, message_yaw_success, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (100, 255, 0), 1, cv2.LINE_AA)
 		return True
-	elif error > TOLERANCE or error < TOLERANCE:
+	elif error > DEGREES_TOLERANCE or error < DEGREES_TOLERANCE:
 				cv2.putText(img, message_yaw, (10, 390), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
 def display_info_on_screen(img, tvec, euler, tvec_d, euler_d):
-	""" Outputs the pose and desired pose of the ArUco marker on screen
-		Parameters:
-			img (ndarray): Image to be written on the information
-			tvec (ndarray): Array with the x, y, and z positions 
-			euler (ndarray): Array with the roll, pitch, and yaw orientations 
-			tvec_d (ndarray): Array with the desired x, y, and z positions 
-			euler_d (ndarray): Array with the desired roll, pitch, and yaw orientations 
+	"""Outputs the pose and desired pose of the ArUco marker on screen.
+
+	Parameters
+	----------
+	img : array-like
+		Image to be written on the information.
+	tvec : array-like
+		Array with the x, y, and z positions. 
+	euler : array-like
+		Array with the roll, pitch, and yaw orientations. 
+	tvec_d : array-like
+		Array with the desired x, y, and z positions. 
+	euler_d : array-like
+		Array with the desired roll, pitch, and yaw orientations. 
+
+	Returns
+	-------
+	None
 	"""
 	x = tvec[0]
 	y = tvec[1]
@@ -291,17 +341,30 @@ def display_info_on_screen(img, tvec, euler, tvec_d, euler_d):
 	cv2.putText(img, current_yaw_str, (5, 70), cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 1, cv2.LINE_AA)
 
 def display_pose_graphs(time, current_time, x, y, z, R, P, Y, axis):
-	""" Draws the pose graphs of the ArUco marker
+	"""Draws the pose graphs of the ArUco marker.
 
-		Parameters:
-			time (list): List containing the time elapsed 
-			x (list): List containing the x positions stored of the ArUco marker
-			y (list): List containing the y positions stored of the ArUco marker
-			z (list): List containing the z positions stored of the ArUco marker
-			R (list): List containing the roll orientation stored of the ArUco marker
-			P (list): List containing the pitch orientation stored of the ArUco marker
-			Y (list): List containing the yaw orientation stored of the ArUco marker
-			axis (ndarray): Axis to be displayed on
+	Parameters
+	----------
+	time : list
+		List containing the time elapsed. 
+	x : list
+		List containing the x positions stored of the ArUco marker.
+	y : list
+		List containing the y positions stored of the ArUco marker.
+	z : list
+		List containing the z positions stored of the ArUco marker.
+	R : list
+		List containing the roll orientation stored of the ArUco marker.
+	P : list
+		List containing the pitch orientation stored of the ArUco marker.
+	Y : list
+		List containing the yaw orientation stored of the ArUco marker.
+	axis : array-like
+		Axis to be displayed on.
+
+	Returns
+	-------
+	None
 	"""
 	axis[0].plot(time, x, color='b', label='x')
 	axis[0].plot(time, y, color='g', label='y')
@@ -323,17 +386,30 @@ def display_pose_graphs(time, current_time, x, y, z, R, P, Y, axis):
 		axis[1].set_ylabel('Camera \norientation (deg)')
 
 def display_error_graphs(time, current_time, x_e, y_e, z_e, R_e, P_e, Y_e, axis):
-	""" Draws the pose graphs of the ArUco marker
+	"""Draws the pose graphs of the ArUco marker
 
-		Parameters:
-			time (list): List containing the time elapsed 
-			x_e (list): List containing the x position error recorded of the ArUco marker
-			y_e (list): List containing the y position error recorded of the ArUco marker
-			z_e (list): List containing the z position error recorded of the ArUco marker
-			R_e (list): List containing the roll angle recorded of the ArUco marker
-			P_e (list): List containing the pitch angle recorded of the ArUco marker
-			Y_e (list): List containing the yaw angle recorded of the ArUco marker
-			axis (ndarray): Axis to be displayed on
+	Parameters
+	----------
+	time : list
+		List containing the time elapsed. 
+	x_e : list
+		List containing the x position error recorded of the ArUco marker.
+	y_e : list
+		List containing the y position error recorded of the ArUco marker.
+	z_e : list
+		List containing the z position error recorded of the ArUco marker.
+	R_e : list
+		List containing the roll angle recorded of the ArUco marker.
+	P_e : list
+		List containing the pitch angle recorded of the ArUco marker.
+	Y_e : list
+		List containing the yaw angle recorded of the ArUco marker.
+	axis : array-like
+		Axis to be displayed on.
+
+	Returns
+	-------
+	None
 	"""
 	axis[0].plot(time, x_e, color='g', label='Error x')
 	axis[0].plot(time, y_e, color='r', label='Error y')

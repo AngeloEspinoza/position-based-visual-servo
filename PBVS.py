@@ -14,9 +14,9 @@ def draw_axis(img, start_pts, img_pts):
     end_point_y = list(img_pts[1].ravel().astype(int))
     end_point_z = list(img_pts[2].ravel().astype(int))
 
-    cv2.arrowedLine(img, start_point, end_point_x, (0, 0, 255), 2)
-    cv2.arrowedLine(img, start_point, end_point_y, (0, 255, 0), 2)
-    cv2.arrowedLine(img, start_point, end_point_z, (255, 0, 0), 2)
+    cv2.arrowedLine(img, start_point, end_point_x, RED, 2)
+    cv2.arrowedLine(img, start_point, end_point_y, GREEN, 2)
+    cv2.arrowedLine(img, start_point, end_point_z, BLUE, 2)
 
     end_point_x[0] = end_point_x[0] + 10
     end_point_y[1] = end_point_y[1] - 10
@@ -24,13 +24,15 @@ def draw_axis(img, start_pts, img_pts):
     end_point_z[0] = end_point_z[0] - 10
 
     cv2.putText(img, 'x', end_point_x, cv2.FONT_HERSHEY_PLAIN,
-     0.8, (0, 0, 255), 1, cv2.LINE_AA)
+     0.8, RED, 1, cv2.LINE_AA)
     cv2.putText(img, 'y', end_point_y, cv2.FONT_HERSHEY_PLAIN,
-     0.8, (0, 255, 0), 1, cv2.LINE_AA)
+     0.8, GREEN, 1, cv2.LINE_AA)
     cv2.putText(img, 'z', end_point_z, cv2.FONT_HERSHEY_PLAIN,
-     0.8, (255, 0, 0), 1, cv2.LINE_AA)
+     0.8, BLUE, 1, cv2.LINE_AA)
 
 MARKER_SIZE = 95 # milimeters
+RED = (0, 0, 255)
+GREEN = (0, 255, 0)
 BLUE = (255, 0, 0)
 
 # Read intrinsic parameters of the camera
@@ -44,14 +46,14 @@ with np.load('bin/camera_matrix.npz') as X:
 ARUCO_DICT = aruco.getPredefinedDictionary(aruco.DICT_4X4_250)
 
 # Define camera to use and set resolution and frame rate
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc('M','J','P','G'))
 
 # Define coordinates in object coordinate space (3D space)
 obj_points = np.zeros((5, 3), np.float32)
-obj_points[1, 0], obj_points[1, 1], obj_points[2, 0] = -MARKER_SIZE / 2, -MARKER_SIZE / 2, MARKER_SIZE / 2
-obj_points[2, 1], obj_points[3, 0], obj_points[3, 1] = -MARKER_SIZE / 2, MARKER_SIZE / 2, MARKER_SIZE / 2
-obj_points[4, 0], obj_points[4, 1] = -MARKER_SIZE / 2, MARKER_SIZE / 2
+obj_points[1, 0], obj_points[1, 1], obj_points[2, 0] = -MARKER_SIZE/2, -MARKER_SIZE/2, MARKER_SIZE/2
+obj_points[2, 1], obj_points[3, 0], obj_points[3, 1] = -MARKER_SIZE/2, MARKER_SIZE/2, MARKER_SIZE/2
+obj_points[4, 0], obj_points[4, 1] = -MARKER_SIZE/2, MARKER_SIZE/2
 
 # 3D axis coordinates to be drawn on the ArUco marker 
 axis = np.float32([[45, 0, 0], [0, -45, 0], [0, 0, -45]]).reshape(-1, 3)
@@ -66,8 +68,8 @@ x_e_list, y_e_list, z_e_list = [], [], []
 roll_e_list, pitch_e_list, yaw_e_list = [], [], []
 time_list = []
 
-figure1, ax1 = plt.subplots(nrows=2, ncols=1, figsize=(7, 5))
-figure2, ax2 = plt.subplots(nrows=2, ncols=1, figsize=(7, 5))
+# figure1, ax1 = plt.subplots(nrows=2, ncols=1, figsize=(7, 5))
+# figure2, ax2 = plt.subplots(nrows=2, ncols=1, figsize=(7, 5))
 
 start_time = time.time()
 
@@ -105,8 +107,8 @@ while True:
 		current_time = time.time() - start_time
 
 		# Center point between the 4 corners
-		aruco_center = np.asarray((abs(corners[0][0][2][0] + corners[0][0][0][0]) // 2,
-							       abs(corners[0][0][2][1] + corners[0][0][0][1]) // 2)).astype(int)
+		aruco_center = np.asarray((abs(corners[0][0][2][0] + corners[0][0][0][0])//2,
+							       abs(corners[0][0][2][1] + corners[0][0][0][1])//2)).astype(int)
 		
 		# Array with the center of the ArUco marker
 		new_corners = np.array([np.vstack((aruco_center, corners[0][0]))])
@@ -127,7 +129,7 @@ while True:
 
 					corner_xy_str = '({0}, {1})'.format(corner_x, corner_y)
 					cv2.putText(frame, corner_xy_str, center_coordinates, 
-								cv2.FONT_HERSHEY_PLAIN, 0.8, (0, 0, 255), 
+								cv2.FONT_HERSHEY_PLAIN, 0.8, RED, 
 								1, cv2.LINE_AA)
 
 					img_pts, jac = cv2.projectPoints(axis, rvec, tvec, K, dist)
@@ -153,7 +155,6 @@ while True:
 					estimated_pose[:3, 3] = realworld_tvec
 				except IndexError:
 					print('[INFO]: IndexError handled')
-					pass
 				continue
 		
 		GUI.display_info_on_screen(img=frame,
@@ -181,31 +182,31 @@ while True:
 
 		time_list.append(current_time)
 
-		GUI.display_pose_graphs(time=time_list,
-								current_time=current_time,
-								x=x_list,
-								y=y_list,
-								z=z_list,
-								R= roll_list,
-								P=pitch_list,
-								Y=yaw_list,
-								axis=ax1)
+		# GUI.display_pose_graphs(time=time_list,
+		# 						current_time=current_time,
+		# 						x=x_list,
+		# 						y=y_list,
+		# 						z=z_list,
+		# 						R= roll_list,
+		# 						P=pitch_list,
+		# 						Y=yaw_list,
+		# 						axis=ax1)
 
-		GUI.display_error_graphs(time=time_list,
-								 current_time=current_time,
-								 x_e=x_e_list,
-								 y_e=y_e_list,
-								 z_e=z_e_list,
-								 R_e= roll_e_list,
-								 P_e=pitch_e_list,
-								 Y_e=yaw_e_list,
-								 axis=ax2)
+		# GUI.display_error_graphs(time=time_list,
+		# 						 current_time=current_time,
+		# 						 x_e=x_e_list,
+		# 						 y_e=y_e_list,
+		# 						 z_e=z_e_list,
+		# 						 R_e= roll_e_list,
+		# 						 P_e=pitch_e_list,
+		# 						 Y_e=yaw_e_list,
+		# 						 axis=ax2)
 
 		plt.pause(0.001) # To constantly refresh the graph
 
 		GUI.display_translation_info(img=img_info,
-								    tvec=realworld_tvec,
-								    tvec_d=desired_realworld_tvec)
+								     tvec=realworld_tvec,
+								     tvec_d=desired_realworld_tvec)
 
 		GUI.display_rotation_info(img=img_info,
 								  euler=estimated_euler_angles,

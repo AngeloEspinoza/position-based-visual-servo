@@ -10,7 +10,6 @@ import GUI
 import aruco_axis
 import argparse
 
-
 # Command line arguments
 parser = argparse.ArgumentParser(description='Implements the Position-Based Visual Servo.')
 parser.add_argument('-dc', '--display_charts', type=bool, action=argparse.BooleanOptionalAction,

@@ -12,6 +12,10 @@ WHITE = (255, 255, 255)
 LINE_TYPE = cv2.LINE_AA
 FONT_TYPE = cv2.FONT_HERSHEY_PLAIN
 
+# Tolerance
+MILIMETERS_TOLERANCE = 10 # milimeters
+DEGREES_TOLERANCE = 10 # degrees
+
 def display_background(img):
 	"""Outputs the background lines for the GUI.
 
@@ -60,17 +64,17 @@ def display_translation_info(img, tvec, tvec_d):
 	error_y = y - y_d
 	error_z = z - z_d
 
-	current_x_str = 'x: {0:4.0f} mm'.format(x)	
-	current_y_str = 'y: {0:4.0f} mm'.format(y)	
-	current_z_str = 'z: {0:4.0f} mm'.format(z)
+	current_x_str = f'x: {x:.0f} mm'	
+	current_y_str = f'y: {y:.0f} mm'	
+	current_z_str = f'z: {z:.0f} mm'
 
-	desired_x_str = 'xd: {0:4.0f} mm'.format(x_d)	
-	desired_y_str = 'yd: {0:4.0f} mm'.format(y_d)	
-	desired_z_str = 'zd: {0:4.0f} mm'.format(z_d)
+	desired_x_str = f'xd: {x_d:.0f} mm'	
+	desired_y_str = f'yd: {y_d:.0f} mm'	
+	desired_z_str = f'zd: {z_d:.0f} mm'
 
-	error_x_str = 'xe: {0:4.0f} mm'.format(error_x)
-	error_y_str = 'ye: {0:4.0f} mm'.format(error_y)
-	error_z_str = 'ze: {0:4.0f} mm'.format(error_z)
+	error_x_str = f'xe: {error_x:.0f} mm'
+	error_y_str = f'ye: {error_y:.0f} mm'
+	error_z_str = f'ze: {error_z:.0f} mm'
 
 	cv2.putText(img, current_x_str, (10, 20), FONT_TYPE, 2, GREEN, 1, LINE_TYPE)
 	cv2.putText(img, current_y_str, (10, 70), FONT_TYPE, 2, RED, 1, LINE_TYPE)
@@ -112,17 +116,17 @@ def display_rotation_info(img, euler, euler_d):
 	error_pitch = pitch - pitch_d
 	error_yaw = yaw - yaw_d
 
-	current_roll_str = 'R: {0:4.0f} deg'.format(roll)
-	current_pitch_str = 'P: {0:4.0f} deg'.format(pitch)
-	current_yaw_str = 'Y: {0:4.0f} deg'.format(yaw)
+	current_roll_str = f'R: {roll:.0f} deg'
+	current_pitch_str = f'P: {pitch:.0f} deg'
+	current_yaw_str = f'Y: {yaw:.0f} deg'
 
-	desired_roll_str = 'Rd: {0:4.0f} deg'.format(roll_d)
-	desired_pitch_str = 'Pd: {0:4.0f} deg'.format(pitch_d)
-	desired_yaw_str = 'Yd: {0:4.0f} deg'.format(yaw_d)
+	desired_roll_str = f'Rd: {roll_d:.0f} deg'
+	desired_pitch_str = f'Pd: {pitch_d:.0f} deg'
+	desired_yaw_str = f'Yd: {yaw_d:.0f} deg'
 
-	error_roll_str = 'Re: {0:4.0f} deg'.format(error_roll)
-	error_pitch_str = 'Pe: {0:4.0f} deg'.format(error_pitch)
-	error_yaw_str = 'Ye: {0:4.0f} deg'.format(error_yaw)
+	error_roll_str = f'Re: {error_roll:.0f} deg'
+	error_pitch_str = f'Pe: {error_pitch:.0f} deg'
+	error_yaw_str = f'Ye: {error_yaw:.0f} deg'
 
 	cv2.putText(img, current_roll_str, (10, 200), FONT_TYPE, 2, GREEN, 1, LINE_TYPE)
 	cv2.putText(img, current_pitch_str, (10, 250), FONT_TYPE, 2, RED, 1, LINE_TYPE)
@@ -156,10 +160,6 @@ def display_interpretation(img, tvec, euler, tvec_d, euler_d):
 	-------
 	None
 	"""
-	global MILIMETERS_TOLERANCE, DEGREES_TOLERANCE
-	MILIMETERS_TOLERANCE = 10 # milimeters
-	DEGREES_TOLERANCE = 10 # degrees
-
 	x = tvec[0]
 	y = tvec[1]
 	z = tvec[2]
@@ -193,8 +193,8 @@ def display_interpretation(img, tvec, euler, tvec_d, euler_d):
 
 def is_success_x(img, error):
 	"""Displays the success message for the x-axis."""
-	message_right = 'Translate{0:4.0f}mm to the right'.format(abs(error))
-	message_left = 'Translate{0:4.0f}mm to the left'.format(abs(error))
+	message_right = f'Translate {abs(error):.0f}mm to the right'
+	message_left = f'Translate {abs(error):.0f}mm to the left'
 	message_x_success = 'You\'ve reached the desired position in x!'
 
 	if error >= -MILIMETERS_TOLERANCE and error <= MILIMETERS_TOLERANCE:
@@ -207,8 +207,8 @@ def is_success_x(img, error):
 
 def is_success_y(img, error):
 	"""Displays the success message for the y-axis."""
-	message_up = 'Translate{0:4.0f}mm up'.format(abs(error))
-	message_down = 'Translate{0:4.0f}mm down'.format(abs(error))
+	message_up = f'Translate {abs(error):.0f}mm up'
+	message_down = f'Translate {abs(error):.0f}mm down'
 	message_y_success = 'You\'ve reached the desired position in y!'
 
 	if error >= -MILIMETERS_TOLERANCE and error <= MILIMETERS_TOLERANCE:
@@ -221,8 +221,8 @@ def is_success_y(img, error):
 
 def is_success_z(img, error):
 	"""Displays the success message for the z-axis."""
-	message_frontwards = 'Translate{0:4.0f}mm frontwards'.format(abs(error))
-	message_backwards = 'Translate{0:4.0f}mm backwards'.format(abs(error))
+	message_frontwards = f'Translate {abs(error):.0f}mm frontwards'
+	message_backwards = f'Translate {abs(error):.0f}mm backwards'
 	message_z_success = 'You\'ve reached the desired position in z!'
 
 	if error >= -MILIMETERS_TOLERANCE and error <= MILIMETERS_TOLERANCE:
@@ -235,7 +235,7 @@ def is_success_z(img, error):
 
 def is_success_roll(img, error):
 	"""Displays the success message for the roll angle."""	
-	message_roll = 'Rotate{0:4.0f} deg around y'.format(error)
+	message_roll = f'Rotate {error:.0f} deg around y'
 	message_roll_success = 'You\'ve reached the desired position in roll!'
 
 	if error >= -DEGREES_TOLERANCE and error <= DEGREES_TOLERANCE:
@@ -246,7 +246,7 @@ def is_success_roll(img, error):
 
 def is_success_pitch(img, error):
 	"""Displays the success message for the pitch angle."""
-	message_pitch = 'Rotate{0:4.0f} deg around x'.format(error)
+	message_pitch = f'Rotate {error:.0f} deg around x'
 	message_pitch_success = 'You\'ve reached the desired position in pitch!'
 
 	if error >= -DEGREES_TOLERANCE and error <= DEGREES_TOLERANCE:
@@ -257,7 +257,7 @@ def is_success_pitch(img, error):
 	
 def is_success_yaw(img, error):
 	"""Displays the success message for the yaw angle."""	
-	message_yaw = 'Rotate{0:4.0f} deg around z'.format(error)
+	message_yaw = f'Rotate {error:.0f} deg around z'
 	message_yaw_success = 'You\'ve reached the desired position in yaw!'
 
 	if error >= -DEGREES_TOLERANCE and error <= DEGREES_TOLERANCE:
@@ -302,29 +302,29 @@ def display_info_on_screen(img, tvec, euler, tvec_d, euler_d):
 	pitch_d = euler_d[1]
 	yaw_d = euler_d[2]
 
-	desired_realworld_tvec_x_str = 'Desired x: {0:4.0f} mm'.format(x_d)
-	desired_realworld_tvec_y_str = 'Desired y: {0:4.0f} mm'.format(y_d)
-	desired_realworld_tvec_z_str = 'Desired z: {0:4.0f} mm'.format(z_d)
+	desired_realworld_tvec_x_str = f'Desired x: {x_d:.0f} mm'
+	desired_realworld_tvec_y_str = f'Desired y: {y_d:.0f} mm'
+	desired_realworld_tvec_z_str = f'Desired z: {z_d:.0f} mm'
 						
-	error_x_str ='Error x: {0:4.0f} mm'.format(x - x_d)
-	error_y_str ='Error y: {0:4.0f} mm'.format(y - y_d)
-	error_z_str ='Error z: {0:4.0f} mm'.format(z - z_d)
+	error_x_str = f'Error x: {x - x_d:.0f} mm'
+	error_y_str = f'Error y: {y - y_d:.0f} mm'
+	error_z_str = f'Error z: {z - z_d:.0f} mm'
 
-	desired_euler_angles_roll_str = 'Desired roll: {0:4.0f} deg'.format(roll_d)
-	desired_euler_angles_pitchstr = 'Desired pitch: {0:4.0f} deg'.format(pitch_d)
-	desired_euler_angles_yaw_str = 'Desired yaw: {0:4.0f} deg'.format(yaw_d)
+	desired_euler_angles_roll_str = f'Desired roll: {roll_d:.0f} deg'
+	desired_euler_angles_pitchstr = f'Desired pitch: {pitch_d:.0f} deg'
+	desired_euler_angles_yaw_str = f'Desired yaw: {yaw_d:.0f} deg'
 
-	error_roll_str ='Error roll: {0:4.0f} deg'.format(roll - roll_d)
-	error_pitch_str ='Error pitch: {0:4.0f} deg'.format(pitch - pitch_d)
-	error_yaw_str ='Error yaw: {0:4.0f} deg'.format(yaw - yaw_d)
+	error_roll_str = f'Error roll: {roll - roll_d:.0f} deg'
+	error_pitch_str = f'Error pitch: {pitch - pitch_d:.0f} deg'
+	error_yaw_str = f'Error yaw: {yaw - yaw_d:.0f} deg'
 
-	current_x_str = 'x = {0:4.0f} mm'.format(x)
-	current_y_str = 'y = {0:4.0f} mm'.format(y)
-	current_z_str = 'z = {0:4.0f} mm'.format(z)
+	current_x_str = f'x = {x:.0f} mm'
+	current_y_str = f'y = {y:.0f} mm'
+	current_z_str = f'z = {z:.0f} mm'
 
-	current_pitch_str = 'pitch = {0:4.0f} deg'.format(pitch)
-	current_roll_str = 'roll = {0:4.0f} deg'.format(roll)
-	current_yaw_str = 'yaw = {0:4.0f} deg'.format(yaw)
+	current_pitch_str = f'pitch = {pitch:.0f} deg'
+	current_roll_str = f'roll = {roll:.0f} deg'
+	current_yaw_str = f'yaw = {yaw:.0f} deg'
 
 	cv2.putText(img, desired_realworld_tvec_x_str, (450, 10), FONT_TYPE, 0.8, RED, 1, LINE_TYPE)
 	cv2.putText(img, desired_realworld_tvec_y_str, (450, 20), FONT_TYPE, 0.8, RED, 1, LINE_TYPE)
@@ -396,7 +396,7 @@ def display_pose_graphs(time, current_time, x, y, z, R, P, Y, axis):
 		axis[1].set_ylabel('Camera \norientation (deg)')
 
 def display_error_graphs(time, current_time, x_e, y_e, z_e, R_e, P_e, Y_e, axis):
-	"""Draws the pose graphs of the ArUco marker
+	"""Draws the pose graphs of the ArUco marker.
 
 	Parameters
 	----------

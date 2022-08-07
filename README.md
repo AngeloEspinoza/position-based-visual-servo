@@ -71,14 +71,16 @@ the program to run slow or even the computer. The recommendation is to run the c
 
 ## Usage 
 ```
-usage: PBVS.py [-h] [-dc | --display_charts | --no-display_charts]
+usage: PBVS.py [-h] [-sc | --show_charts | --no-show_charts] [-sg | --show_gui | --no-show_gui]
 
 Implements the Position-Based Visual Servo.
 
 options:
   -h, --help            show this help message and exit
-  -dc, --display_charts, --no-display_charts
-                        Display the charts of position and orientationin real time
+  -sc, --show_charts, --no-show_charts
+                        Shows the charts of position and orientationin real time
+  -sg, --show_gui, --no-show_gui
+                        Shows the gui to reach the desired pose of the ArUco marker (default: True)
 ```
 
 To save the current pose of the ArUco marker relative to the camera the key ```q``` can be pressed. This will save the pose into a ```.npy``` file in the ```/bin``` directory.
@@ -86,7 +88,11 @@ To save the current pose of the ArUco marker relative to the camera the key ```q
 ## Examples
 To display the charts in real-time
 
-```python3 PBVS.py --display_charts```
+```python3 PBVS.py --show_charts```
+
+To not show the GUI
+
+```python3 PBVS.py --no-show_gui```
 
 ## License
 MIT License

@@ -83,6 +83,7 @@ options:
 
 ## Examples
 To display the charts in real-time
+
 ```python3 PBVS.py --display_charts```
 
 ## License

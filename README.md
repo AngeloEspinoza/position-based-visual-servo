@@ -57,7 +57,7 @@ I have decided to add some charts as a reference using the well-known ```matplot
 as their position and orientation error of the camera with respect to the ArUco marker.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/40195016/183272642-4edb555b-d6d7-46b7-a4b3-ea5e5968bf25.gif" width="350"/>
+  <img src="https://user-images.githubusercontent.com/40195016/183272642-4edb555b-d6d7-46b7-a4b3-ea5e5968bf25.gif" width="344"/>
   <img src="https://user-images.githubusercontent.com/40195016/183272643-8541d757-7fac-4038-a843-e3176396c1b9.gif" width="350"/>
 </p>
 
@@ -80,6 +80,8 @@ options:
   -dc, --display_charts, --no-display_charts
                         Display the charts of position and orientationin real time
 ```
+
+To save the current pose of the ArUco marker relative to the camera the key ```q``` can be pressed. This will save the pose into a ```.npy``` file in the ```/bin``` directory.
 
 ## Examples
 To display the charts in real-time

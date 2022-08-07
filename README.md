@@ -1,8 +1,8 @@
 # Position-Based Visual Servo 
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/40195016/183271876-c494e9b1-2fe8-4bbf-8176-5026367c5b4f.gif" width="430"/>
-  <img src="https://user-images.githubusercontent.com/40195016/183271879-a6de2253-161a-4a3e-b4c3-0b018fec77e6.gif" width="430"/>
+  <img src="https://user-images.githubusercontent.com/40195016/183271876-c494e9b1-2fe8-4bbf-8176-5026367c5b4f.gif" width="230"/>
+  <img src="https://user-images.githubusercontent.com/40195016/183271879-a6de2253-161a-4a3e-b4c3-0b018fec77e6.gif" width="230"/>
 </p>
 
 ## Description
@@ -43,8 +43,8 @@ Essentially, the Graphical User Interface (GUI) works as a guide for whoever is 
 This text let the user know what are the steps to follow to reach the goal position, and they are displayed sequentially.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/40195016/183271464-a03748d7-0f23-4dfc-9dbb-5fb0c51e670e.gif" width="330"/>
-  <img src="https://user-images.githubusercontent.com/40195016/183271632-1594060f-06ca-4d46-abcb-5c886dc73f18.gif" width="330"/>
+  <img src="https://user-images.githubusercontent.com/40195016/183271464-a03748d7-0f23-4dfc-9dbb-5fb0c51e670e.gif" width="230"/>
+  <img src="https://user-images.githubusercontent.com/40195016/183271632-1594060f-06ca-4d46-abcb-5c886dc73f18.gif" width="230"/>
 </p>
 
 At the moment of showing the information, different windows are displayed. The top-left window is the current position in $x, y$ and $z$ the bottom-left window is the current
@@ -57,8 +57,8 @@ I have decided to add some charts as a reference using the well-known ```matplot
 as their position and orientation error of the camera with respect to the ArUco marker.
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/40195016/183272642-4edb555b-d6d7-46b7-a4b3-ea5e5968bf25.gif" width="423"/>
-  <img src="https://user-images.githubusercontent.com/40195016/183272643-8541d757-7fac-4038-a843-e3176396c1b9.gif" width="430"/>
+  <img src="https://user-images.githubusercontent.com/40195016/183272642-4edb555b-d6d7-46b7-a4b3-ea5e5968bf25.gif" width="230"/>
+  <img src="https://user-images.githubusercontent.com/40195016/183272643-8541d757-7fac-4038-a843-e3176396c1b9.gif" width="230"/>
 </p>
 
 <p align="center">

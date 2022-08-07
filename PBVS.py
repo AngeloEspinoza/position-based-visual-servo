@@ -12,8 +12,11 @@ import argparse
 
 # Command line arguments
 parser = argparse.ArgumentParser(description='Implements the Position-Based Visual Servo.')
-parser.add_argument('-dc', '--display_charts', type=bool, action=argparse.BooleanOptionalAction,
-	metavar='', required=False, help='Display the charts of position and orientationin real time')
+parser.add_argument('-sc', '--show_charts', type=bool, action=argparse.BooleanOptionalAction,
+	metavar='', required=False, help='Shows the charts of position and orientationin real time')
+parser.add_argument('-sg', '--show_gui', default=True, type=bool, 
+	action=argparse.BooleanOptionalAction, metavar='', required=False,
+	help='Shows the gui to reach the desired pose of the ArUco marker')
 args = parser.parse_args()
 
 MARKER_SIZE = 95 # milimeters
@@ -52,22 +55,24 @@ def main():
 	roll_e_list, pitch_e_list, yaw_e_list = [], [], []
 	time_list = []
 
-	if args.display_charts:
+	if args.show_charts:
 		figure1, ax1 = plt.subplots(nrows=2, ncols=1, figsize=(7, 5))
 		figure2, ax2 = plt.subplots(nrows=2, ncols=1, figsize=(7, 5))
 		start_time = time.time()
 
-	# Set up the GUI window to display the info
-	root = 'PBVS - info'
-	cv2.namedWindow(root)
-	img_info = np.ones((600, 700, 3), np.uint8)
+	if args.show_gui:
+		# Set up the GUI window to display the info
+		root = 'PBVS - info'
+		cv2.namedWindow(root)
+		img_info = np.ones((600, 700, 3), np.uint8)
 
 	while True:
 		# Read frames of the camera
 		ret, frame = cap.read()
 
-		cv2.namedWindow(root)
-		img_info = np.ones((600, 700, 3), np.uint8)
+		if args.show_gui:
+			cv2.namedWindow(root)
+			img_info = np.ones((600, 700, 3), np.uint8)
 
 		# Convert image to gray scale
 		frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -134,9 +139,10 @@ def main():
 					except IndexError:
 						print('[INFO]: IndexError handled')
 					continue
-			
-			GUI.display_info_on_screen(img=frame, tvec=realworld_tvec, euler=estimated_euler_angles,
-				tvec_d=desired_realworld_tvec, euler_d=desired_euler_angles)
+
+			if args.show_gui:
+				GUI.display_info_on_screen(img=frame, tvec=realworld_tvec, euler=estimated_euler_angles,
+					tvec_d=desired_realworld_tvec, euler_d=desired_euler_angles)
 
 			# Store pose, and pose error values to plot them
 			x_list.append(realworld_tvec[0])
@@ -156,7 +162,7 @@ def main():
 			yaw_e_list.append(yaw - desired_euler_angles[2])
 
 
-			if args.display_charts:
+			if args.show_charts:
 				current_time = time.time() - start_time
 				time_list.append(current_time)
 				GUI.display_pose_graphs(time=time_list, current_time=current_time, x=x_list, y=y_list,
@@ -168,17 +174,18 @@ def main():
 
 			plt.pause(0.001) # To constantly refresh the graph
 
-			GUI.display_translation_info(img=img_info, tvec=realworld_tvec,
-				tvec_d=desired_realworld_tvec)
-
-			GUI.display_rotation_info(img=img_info, euler=estimated_euler_angles,
-		    	euler_d=desired_euler_angles)
-
-			GUI.display_interpretation(img=img_info, tvec=realworld_tvec, euler=estimated_euler_angles,
-				tvec_d=desired_realworld_tvec, euler_d=desired_euler_angles)
+			if args.show_gui:
+				GUI.display_translation_info(img=img_info, tvec=realworld_tvec,
+					tvec_d=desired_realworld_tvec)
+				GUI.display_rotation_info(img=img_info, euler=estimated_euler_angles,
+			    	euler_d=desired_euler_angles)
+				GUI.display_interpretation(img=img_info, tvec=realworld_tvec, euler=estimated_euler_angles,
+					tvec_d=desired_realworld_tvec, euler_d=desired_euler_angles)
 		
-		GUI.display_background(img_info)
-		cv2.imshow(root, img_info)
+		if args.show_gui:
+			GUI.display_background(img_info)
+			cv2.imshow(root, img_info)
+		
 		cv2.imshow('PVBS - RGB', frame)
 
 		# If 'q' pressed, save the current pose of the ArUco marker 

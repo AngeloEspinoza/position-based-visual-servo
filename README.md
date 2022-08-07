@@ -86,7 +86,7 @@ options:
 To save the current pose of the ArUco marker relative to the camera the key ```q``` can be pressed. This will save the pose into a ```.npy``` file in the ```/bin``` directory.
 
 ## Examples
-To display the charts in real-time
+To show the charts in real-time
 
 ```python3 PBVS.py --show_charts```
 
